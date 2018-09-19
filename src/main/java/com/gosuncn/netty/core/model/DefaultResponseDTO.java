@@ -7,7 +7,7 @@ package com.gosuncn.netty.core.model;
  * @date 2018年9月18日
  * @description 默认解编码器对应的数据传输对象 （data transfer object）
  */
-public class DefaultDTO {
+public class DefaultResponseDTO extends Serializer{
 
 	/**报文开始标志*/
 	private int startFlag = CodecConst.START_FLAG;
@@ -19,10 +19,33 @@ public class DefaultDTO {
 	private int bodyLen; 
 	
 	/**报文头*/
-	private DefaultHeader header; 
+	private DefaultResponseHeader header; 
 
 	/**报文体*/
 	private byte[] body;
+	
+	
+	@Override
+	protected void read() {
+		
+		this.startFlag = this.readInt();
+		this.headerLen = this.readShort();
+		this.bodyLen = this.readInt();
+		this.header = this.readObject(DefaultResponseHeader.class);
+		this.body = new byte[this.bodyLen];
+		this.body = this.readBytes(body);
+	}
+
+	@Override
+	protected void write() {
+		
+		this.writeInt(this.startFlag);
+		this.writeShort(this.headerLen);
+		this.writeInt(this.bodyLen);
+		this.writeObject(this.header, DefaultResponseHeader.class);
+		this.writeBytes(this.body);
+		
+	}
 
 	public int getStartFlag() {
 		return startFlag;
@@ -48,11 +71,11 @@ public class DefaultDTO {
 		this.bodyLen = bodyLen;
 	}
 
-	public DefaultHeader getHeader() {
+	public DefaultResponseHeader getHeader() {
 		return header;
 	}
 
-	public void setHeader(DefaultHeader header) {
+	public void setHeader(DefaultResponseHeader header) {
 		this.header = header;
 	}
 
@@ -63,6 +86,8 @@ public class DefaultDTO {
 	public void setBody(byte[] body) {
 		this.body = body;
 	}
+
+	
 	
 	
 	

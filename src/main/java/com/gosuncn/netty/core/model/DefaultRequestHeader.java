@@ -14,25 +14,10 @@ public class DefaultRequestHeader extends DefaultHeader{
 	/**请求类型*/
 	private Short requestType;
 	
-	private Double aa;
-	
-	
-	public Double getAa() {
-		return aa;
-	}
-
-	public void setAa(Double aa) {
-		this.aa = aa;
-	}
-
-	
-	
-	
 	@Override
 	protected void read() {
 		
 		this.url = this.readString();
-		this.aa = this.readDouble();
 		this.requestType = this.readShort();
 		
 	}
@@ -41,7 +26,6 @@ public class DefaultRequestHeader extends DefaultHeader{
 	protected void write() {
 		
 		this.writeString(this.url);
-		this.writeDouble(this.aa);
 		this.writeShort(this.requestType);
 		
 	}

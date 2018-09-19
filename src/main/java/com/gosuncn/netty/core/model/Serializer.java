@@ -41,56 +41,56 @@ public abstract class Serializer {
 		return readBuf.readShort();
 	}
 	
-	public void writeShort(short value){
-		writeBuf.writeShort(value);
+	public void writeShort(Short value){
+		writeBuf.writeShort(value == null ? 0 : value);
 	}
 	
 	public int readInt(){
 		return readBuf.readInt();
 	}
 	
-	public void writeInt(int value){
-		writeBuf.writeInt(value);
+	public void writeInt(Integer value){
+		writeBuf.writeInt(value == null ? 0 : value);
 	}
 	
 	public long readLong(){
 		return readBuf.readLong();
 	}
 	
-	public void writeLong(long value){
-		writeBuf.writeLong(value);
+	public void writeLong(Long value){
+		writeBuf.writeLong(value == null ? 0 : value);
 	}
 	
 	public float readFloat(){
 		return readBuf.readFloat();
 	}
 	
-	public void writeFloat(float value){
-		writeBuf.writeFloat(value);
+	public void writeFloat(Float value){
+		writeBuf.writeFloat(value == null ? 0f: value);
 	}
 	
 	public double readDouble(){
 		return readBuf.readDouble();
 	}
 	
-	public void writeDouble(double value){
-		writeBuf.writeDouble(value);
+	public void writeDouble(Double value){
+		writeBuf.writeDouble(value == null ? 0.0 : value);
 	}
 	
 	public boolean readBoolean(){
 		return readBuf.readBoolean();
 	}
 	
-	public void writeBoolean(boolean value){
-		writeBuf.writeBoolean(value);
+	public void writeBoolean(Boolean value){
+		writeBuf.writeBoolean(value == null ? false : value);
 	}
 	
 	public byte readByte(){
 		return readBuf.readByte();
 	}
 	
-	public void writeByte(byte value){
-		writeBuf.writeByte(value);
+	public void writeByte(Byte value){
+		writeBuf.writeByte(value == null ? 0 : value);
 	}
 	
 	public byte[] readBytes(byte[] data){
@@ -99,7 +99,7 @@ public abstract class Serializer {
 	}
 	
 	public void writeBytes(byte[] data){
-		writeBuf.writeBytes(data);
+		writeBuf.writeBytes(data == null ? (new byte[0]): data);
 	}
 	
 	public String readString(){
@@ -149,19 +149,19 @@ public abstract class Serializer {
 		return map;
 	}
 	
-	public <T> void writeList(List<T> list){
+	public void writeList(List<?> list,Class<?> clazz){
 		if(list == null || list.isEmpty()){
 			writeShort((short)0);
 			return;
 		}
 		
 		writeShort((short)list.size());
-		for(T item : list){
-			writeObject(item);
+		for(Object item : list){
+			writeObject(item,clazz);
 		}
 	}
 	
-	public <K,V> void writeMap(Map<K,V> map){
+	public <K,V> void writeMap(Map<K,V> map,Class<?> keyClazz,Class<?> valueClazz){
 		
 		if(map == null || map.isEmpty()){
 			writeShort((short)0);
@@ -170,8 +170,8 @@ public abstract class Serializer {
 		
 		writeShort((short)map.size());
 		for(Entry<K, V> keyValue : map.entrySet()){
-			writeObject(keyValue.getKey());
-			writeObject(keyValue.getValue());
+			writeObject(keyValue.getKey(),keyClazz);
+			writeObject(keyValue.getValue(),valueClazz);
 		}
 	}
 	
@@ -214,36 +214,38 @@ public abstract class Serializer {
 		return (T)t; 
 	}
 	
-	public void writeObject(Object obj){
+	public <T> void writeObject(Object obj,Class<T> clazz){
 		
-		if(obj == null){
-			throw new RuntimeException("不支持序列化一个null对象");
-		}else{
-			
-			if(obj instanceof Short){
-				writeShort((Short)obj);
-			}else if(obj instanceof Integer){
-				writeInt((Integer)obj);
-			}else if(obj instanceof Long){
-				writeLong((Long)obj);
-			}else if(obj instanceof Float){
-				writeFloat((Float)obj);
-			}else if(obj instanceof Double){
-				writeDouble((Double)obj);
-			}else if(obj instanceof Boolean){
-				writeBoolean((Boolean)obj);
-			}else if(obj instanceof Byte){
-				writeByte((Byte)obj);
-			}else if(obj instanceof String){
-				writeString((String)obj);
-			}else if(obj instanceof Serializer){
-				// 先写入 1作对象分隔符
+		if(clazz == short.class || clazz == Short.class){
+			writeShort((Short)obj);
+		}else if(clazz == int.class || clazz == Integer.class){
+			writeInt((Integer)obj);
+		}else if(clazz == long.class || clazz == Long.class){
+			writeLong((Long)obj);
+		}else if(clazz == float.class || clazz == Float.class){
+			writeFloat((Float)obj);
+		}else if(clazz == double.class || clazz == Double.class){
+			writeDouble((Double)obj);
+		}else if(clazz == boolean.class || clazz == Boolean.class){
+			writeBoolean((Boolean)obj);
+		}else if(clazz == byte.class || clazz == Byte.class){
+			writeByte((Byte)obj);
+		}else if(clazz == String.class){
+			writeString((String)obj);
+		}else if(Serializer.class.isAssignableFrom(clazz)){
+			// clazz是Serializer的子类
+			if(obj == null){
+				// null 对象写入0作为分隔符
+				writeShort((short)0);
+			}else{
+				// 非null对象写入1作为分隔符
 				writeShort((short)1);
 				((Serializer)obj).writeToByteBuf(this.writeBuf);
-			}else{
-				throw new RuntimeException("不支持的序列化类型-" + obj.getClass().getName());
 			}
+		}else{
+			throw new RuntimeException("不支持的序列化类型-" + clazz.getName());
 		}
+		
 	}
 	
 	/**
