@@ -37,9 +37,9 @@
 
 	<logger name="com.gosuncn.netty" level="TRACE"/>
 	<!-- 全局配置 -->
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="STDOUT"/>
-		<appender-ref ref="FILE"/>
+		<!-- <appender-ref ref="FILE"/> -->
 	</root>
 	
 </configuration>
