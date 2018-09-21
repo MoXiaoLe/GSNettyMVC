@@ -1,5 +1,6 @@
+[TOC]
+
 # GoNettyComponent
-基于 Netty 的一个 TCP 服务器，主要目的是通过模仿封装，学习 Netty源码、spring mvc 的源码、以及一些常用的设计模式。  
 
 ### 1.基本功能
 
