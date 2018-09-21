@@ -85,8 +85,6 @@ public class DefaultHeaderTest {
 		
 		LoggerUtils.info("exchangedDTO对象-{}",JsonUtils.toJsonString(exchangedDTO));
 		
-		
-		
 	}
 
 }
