@@ -13,7 +13,7 @@ public class DefaultHeaderTest {
 	
 	private DefaultResponseHeader responseHeader;
 	
-	private DefaultRequestDTO defaultDTO;
+	private DefaultDTO defaultDTO;
 	
 	@Before
 	public void init(){
@@ -26,9 +26,15 @@ public class DefaultHeaderTest {
 		responseHeader.setResponseType((short)1);
 		responseHeader.setStatus((short)2);
 		
-		defaultDTO = new DefaultRequestDTO();
-		defaultDTO.setHeaderLen((short)requestHeader.getBytes().length);
-		defaultDTO.setHeader(requestHeader);
+		defaultDTO = new DefaultDTO();
+		
+		//defaultDTO.setMsgType(MsgTypeEnum.REQUEST.getValue());
+		//defaultDTO.setHeaderLen((short)requestHeader.getBytes().length);
+		//defaultDTO.setHeader(requestHeader);
+		
+		defaultDTO.setMsgType(MsgTypeEnum.RESPONSE.getValue());
+		defaultDTO.setHeaderLen((short)responseHeader.getBytes().length);
+		defaultDTO.setHeader(responseHeader);
 		
 		byte[] body = new byte[10];
 		body[0] = 6;
@@ -80,7 +86,7 @@ public class DefaultHeaderTest {
 		
 		LoggerUtils.info("转换后的字节数组-{}",data);
 		
-		DefaultResponseDTO exchangedDTO = new DefaultResponseDTO();
+		DefaultDTO exchangedDTO = new DefaultDTO();
 		exchangedDTO.readFromBytes(data);
 		
 		LoggerUtils.info("exchangedDTO对象-{}",JsonUtils.toJsonString(exchangedDTO));

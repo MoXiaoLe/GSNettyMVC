@@ -11,7 +11,11 @@ public interface CodecConst {
 	/**报文头标志*/
 	final int START_FLAG = 199554;
 	
-	/**报文基础长度（报文头标志变量 （4字节）+ 报文头长度变量（2字节） + 报文体长度变量（4字节））*/
-	final int BASE_MESSAGE_LEN = 10;
+	/**
+	 * 报文基础长度:
+	 * 报文头标志变量 （4字节）+ 报文类型（1字节）+ 报文头长度变量（2字节） + 报文体长度变量（4字节）
+	 * 
+	 */
+	final int BASE_MESSAGE_LEN = 11;
 	
 }
