@@ -17,8 +17,8 @@ import com.gosuncn.netty.core.model.DefaultRequestHeader;
 import com.gosuncn.netty.core.model.MsgTypeEnum;
 import com.gosuncn.netty.core.processor.ClientNettyProcessor;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class GoNettyComponentApplicationTests {
 	
 	private ClientNettyProcessor processor;
@@ -53,6 +53,9 @@ public class GoNettyComponentApplicationTests {
 		dto.setBodyLen(body.length);
 		dto.setBody(body);
 		processor.send(dto);
+		
+		
+		System.out.println("结束单元测试");
 		
 	}
 

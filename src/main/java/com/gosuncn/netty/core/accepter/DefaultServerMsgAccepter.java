@@ -74,7 +74,7 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 	protected void service(GoRequest goRequest,GoResponse goResponse) {
 		
 		//DefaultRequestHeader header = (DefaultRequestHeader)goRequest.getHeader();
-		
+		// 把消息路由到 dispatcher
 		LoggerUtils.info("接收到消息-{}",goRequest.getBody());
 		
 	}
