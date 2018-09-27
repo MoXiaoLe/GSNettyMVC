@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.gosuncn.netty.common.util.JsonUtils;
 import com.gosuncn.netty.common.util.LoggerUtils;
 import com.gosuncn.netty.core.common.BufferFactory;
 import com.gosuncn.netty.core.model.DefaultDTO;
@@ -55,10 +56,10 @@ public class CodecTest {
 		ByteBuf buff = BufferFactory.buildBuff();
 		encoder.encode(null, defaultDTO, buff);
 		encoder.encode(null, defaultDTO, buff);
-		LoggerUtils.info("编码结果-{}",buff);
+		LoggerUtils.info("编码结果-{}",buff.toString());
 		List<Object> resultList = new ArrayList<Object>();
 		decoder.decode(null, buff, resultList);
-		LoggerUtils.info("解码结果-{}",resultList);
+		LoggerUtils.info("解码结果-{}",JsonUtils.toJsonString(resultList));
 	}
 	
 
