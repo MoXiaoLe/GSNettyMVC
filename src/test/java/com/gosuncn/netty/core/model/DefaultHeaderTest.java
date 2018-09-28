@@ -19,12 +19,12 @@ public class DefaultHeaderTest {
 	public void init(){
 		
 		requestHeader = new DefaultRequestHeader();
-		requestHeader.setRequestType((short)1);
+		requestHeader.setRequestType((byte)1);
 		requestHeader.setUrl("xiaomo/helloworld");
 		
 		responseHeader = new DefaultResponseHeader();
-		responseHeader.setResponseType((short)1);
-		responseHeader.setStatus((short)2);
+		responseHeader.setResponseType((byte)1);
+		responseHeader.setStatus((byte)2);
 		
 		defaultDTO = new DefaultDTO();
 		

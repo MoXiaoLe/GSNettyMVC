@@ -19,5 +19,13 @@ public class CommonTest {
 		
 	}
 	
+	@Test 
+	public void testRegx(){
+		
+		String url = "http:////tool.oschina.net///regex///".replaceAll("/+", "/");
+		
+		System.out.println(url);
+	}
+	
 	
 }

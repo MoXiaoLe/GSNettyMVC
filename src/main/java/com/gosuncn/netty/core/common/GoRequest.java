@@ -2,6 +2,7 @@ package com.gosuncn.netty.core.common;
 
 import java.util.Map;
 
+import com.gosuncn.netty.common.util.JsonUtils.Node;
 import com.gosuncn.netty.core.model.DefaultHeader;
 
 import io.netty.channel.Channel;
@@ -20,15 +21,20 @@ public class GoRequest {
 	private GoContext goContext;
 	/**通道*/
 	private Channel channel;
-	/**请求参数map*/
-	private Map<String, String[]> paramsMap;
 	/**报文头*/
 	private DefaultHeader header;
 	/**报文体*/
 	private byte[] body;
 	
+	/**请求参数对象(BodyTypeEnum.SERIALIZER)*/
+	private Object params;
+	/**请求参数map(BodyTypeEnum.FORM)*/
+	private Map<String, String[]> paramsMap;
+	/**请求参数Node(BodyTypeEnum.JSON)*/
+	private Node paramsNode;
+	
 	private GoRequest(){
-		// TODO 从ioc容器中获取 GoContext
+		this.goContext = IocContainer.getGoContext();
 	}
 	
 	public static GoRequest newInstance(Channel channel,DefaultHeader header,byte[] body){
@@ -37,8 +43,7 @@ public class GoRequest {
 		goRequest.setChannel(channel);
 		goRequest.setBody(body);
 		goRequest.setHeader(header);
-		//TODO  从ioc容器中获取 GoSession
-		// goRequest.setSession(session);
+		goRequest.setSession(IocContainer.getSession(channel.id().asLongText()));
 		
 		return goRequest;
 	}
@@ -78,6 +83,18 @@ public class GoRequest {
 	}
 	public void setBody(byte[] body) {
 		this.body = body;
+	}
+	public Object getParams() {
+		return params;
+	}
+	public void setParams(Object params) {
+		this.params = params;
+	}
+	public Node getParamsNode() {
+		return paramsNode;
+	}
+	public void setParamsNode(Node paramsNode) {
+		this.paramsNode = paramsNode;
 	}
 	
 	

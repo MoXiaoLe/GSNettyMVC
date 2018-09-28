@@ -105,7 +105,7 @@ public class JsonUtils {
 		List<Node> nodeList = new ArrayList<>();
 		for(int i=0;i<array.size();i++){
 			Node node = new Node();
-			node.setKey("key" + (i + 1));
+			node.setKey("ARRAY_KEY_" + (i + 1));
 			Object obj = array.get(i);
 			if(obj instanceof JSONObject){
 				node.setNodeList(handleJsonObject((JSONObject)obj));
@@ -153,29 +153,29 @@ public class JsonUtils {
 		student.setStudent(new Student());
 		String str1 = toJsonString(student);
 		Node node1 = getNodeFromJsonString(str1);
-		System.out.println(node1);
+		System.out.println(JsonUtils.toJsonString(node1));
 		
 		List<Student> stuList = new ArrayList<JsonUtils.Student>();
 		stuList.add(student);
 		stuList.add(student);
 		String str2 = toJsonString(stuList);
 		Node node2 = getNodeFromJsonString(str2);
-		System.out.println(node2);
+		System.out.println(JsonUtils.toJsonString(node2));
 		
 	}
 	
 	
 	static class Student{
 		
-		private String name = "xiaomo";
+		private String nameNiHAli = "xiaomo";
 		private int age = 23;
 		private String home = "zhaoqing";
 		private Student student;
-		public String getName() {
-			return name;
+		public String getNameNiHAli() {
+			return nameNiHAli;
 		}
-		public void setName(String name) {
-			this.name = name;
+		public void setNameNiHAli(String nameNiHAli) {
+			this.nameNiHAli = nameNiHAli;
 		}
 		public int getAge() {
 			return age;

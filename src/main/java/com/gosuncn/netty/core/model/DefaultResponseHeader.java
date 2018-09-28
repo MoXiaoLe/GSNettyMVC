@@ -9,41 +9,41 @@ package com.gosuncn.netty.core.model;
 public class DefaultResponseHeader extends DefaultHeader{
 
 	/**响应状态码*/
-	private Short status;
+	private byte status;
 	
 	/**响应类型*/
-	private Short responseType;
+	private byte responseType;
 	
 	@Override
 	protected void read() {
 		
-		this.status = this.readShort();
-		this.responseType = this.readShort();
+		this.status = this.readByte();
+		this.responseType = this.readByte();
 	
 	}
 
 	@Override
 	protected void write() {
 		
-		this.writeShort(this.status);
-		this.writeShort(this.responseType);
+		this.writeByte(this.status);
+		this.writeByte(this.responseType);
 		
 	}
 	
 
-	public Short getStatus() {
+	public byte getStatus() {
 		return status;
 	}
 
-	public void setStatus(Short status) {
+	public void setStatus(byte status) {
 		this.status = status;
 	}
 
-	public Short getResponseType() {
+	public byte getResponseType() {
 		return responseType;
 	}
 
-	public void setResponseType(Short responseType) {
+	public void setResponseType(byte responseType) {
 		this.responseType = responseType;
 	}
 

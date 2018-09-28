@@ -5,6 +5,7 @@ package com.gosuncn.netty.core.processor;
 import java.util.List;
 
 import com.gosuncn.netty.common.util.LoggerUtils;
+import com.gosuncn.netty.core.common.IocContainer;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandler;
@@ -36,12 +37,14 @@ public class ServerNettyProcessor implements GoNettyProcessor{
     
 	public ServerNettyProcessor() {
 		super();
+		IocContainer.initContext(this.port);
 	}
 	
 	public ServerNettyProcessor(int port, int buffSize) {
 		super();
 		this.port = port;
 		this.buffSize = buffSize;
+		IocContainer.initContext(port);
 	}
 
 	@Override

@@ -30,8 +30,8 @@ public class CodecTest {
 	public void init(){
 		
 		responseHeader = new DefaultResponseHeader();
-		responseHeader.setResponseType((short)1);
-		responseHeader.setStatus((short)2);
+		responseHeader.setResponseType((byte)1);
+		responseHeader.setStatus((byte)2);
 		
 		defaultDTO = new DefaultDTO();
 		defaultDTO.setMsgType(MsgTypeEnum.RESPONSE.getValue());

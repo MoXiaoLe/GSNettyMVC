@@ -12,13 +12,13 @@ public class DefaultRequestHeader extends DefaultHeader{
 	private String url;
 	
 	/**请求类型*/
-	private Short requestType;
+	private byte requestType;
 	
 	@Override
 	protected void read() {
 		
 		this.url = this.readString();
-		this.requestType = this.readShort();
+		this.requestType = this.readByte();
 		
 	}
 
@@ -26,7 +26,7 @@ public class DefaultRequestHeader extends DefaultHeader{
 	protected void write() {
 		
 		this.writeString(this.url);
-		this.writeShort(this.requestType);
+		this.writeByte(this.requestType);
 		
 	}
 
@@ -38,11 +38,11 @@ public class DefaultRequestHeader extends DefaultHeader{
 		this.url = url;
 	}
 
-	public Short getRequestType() {
+	public byte getRequestType() {
 		return requestType;
 	}
 
-	public void setRequestType(Short requestType) {
+	public void setRequestType(byte requestType) {
 		this.requestType = requestType;
 	}
 

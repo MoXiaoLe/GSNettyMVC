@@ -25,15 +25,14 @@ public class GoResponse {
 	private byte[] body;
 	
 	private GoResponse(){
-		// TODO 从ioc容器中获取 GoContext
+		this.goContext = IocContainer.getGoContext();
 	}
 	
 	public static GoResponse newInstance(Channel channel,DefaultHeader header,byte[] body){
 		
 		GoResponse goResponse = new GoResponse();
 		goResponse.setChannel(channel);
-		// TODO 从ioc容器中获取 GoSession
-		// goResponse.setSession(session);
+		goResponse.setSession(IocContainer.getSession(channel.id().asLongText()));
 		goResponse.setBody(body);
 		return goResponse;
 	}
