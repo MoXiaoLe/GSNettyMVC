@@ -1,6 +1,6 @@
 package com.gosuncn.netty.business.model;
 
-public class TestModel {
+public class DeviceModel {
 	
 	private String deviceId;
 	private String deviceName;

@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.gosuncn.netty.common.util.INetUtils;
 import com.gosuncn.netty.common.util.JsonUtils.Node;
 import com.gosuncn.netty.common.util.LoggerUtils;
 import com.gosuncn.netty.core.common.InvokerHolder;
@@ -49,8 +50,8 @@ public class DefaultServerMsgDispatcher {
 		
 		DefaultRequestHeader header = (DefaultRequestHeader) request.getHeader();
 		String url = header.getUrl().trim();
-		String contextPath = request.getGoContext().getContextPath();
-		url = url.replaceFirst(contextPath,"").replaceAll("/+", "/");
+		int port = request.getGoContext().getPort();
+		url = url.replaceFirst(INetUtils.REGEX_IP + ":" + port,"").replaceAll("/+", "/");
 		InvokerHolder invoker = IocContainer.getInvokerHolder(url);
 		if(invoker == null){
 			LoggerUtils.warn("找不到对应的执行方法,响应状态码：1");

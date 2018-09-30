@@ -24,7 +24,7 @@ public class GoNettyComponentApplicationTests {
 	public void init() throws Exception{
 		
 		processor = GoNettyProcessor.clientBuilder()
-						.host("169.254.204.125")
+						.host("127.0.0.1")
 						.port(8080)
 						.build();
 		processor.start();
@@ -32,15 +32,42 @@ public class GoNettyComponentApplicationTests {
 	}
 	
 	@Test
-	public void send(){
+	public void test(){
 		
-		ParamsModel model = new ParamsModel();
-		model.setDeviceName("中国北斗系列第七号卫星");
-		model.setLatitude(132.68);
-		model.setLongitude(326.66);
+		getDeviceInfoWithLogin();
+		getDeviceInfoWithoutLogin();
+		login();
+		getDeviceInfoWithLogin();
+		getDeviceInfoWithoutLogin();
+		
+		pause();
+		
+	}
+	
+	
+	public void login(){
 		
 		DefaultHeader requestHeader = DefaultHeader.requestHeaderBuilder()
-				.url("xiaomo/hello")
+				.url("test/login")
+				.build();
+		
+		DefaultDTO dto = DefaultDTO.buidler()
+				.msgType(MsgTypeEnum.REQUEST.getValue())
+				.header(requestHeader)
+				.build();
+		
+		processor.send(dto);
+		
+		
+	}
+	
+	public void getDeviceInfoWithLogin(){
+		
+		ParamsModel model = new ParamsModel();
+		model.setDeviceId("666666");
+		
+		DefaultHeader requestHeader = DefaultHeader.requestHeaderBuilder()
+				.url("test/helloWithLogin")
 				.build();
 		
 		DefaultDTO dto = DefaultDTO.buidler()
@@ -51,34 +78,39 @@ public class GoNettyComponentApplicationTests {
 		
 		processor.send(dto);
 		
+	}
+	
+	public void getDeviceInfoWithoutLogin(){
 		
-		pause();
+		ParamsModel model = new ParamsModel();
+		model.setDeviceId("666666");
+		
+		DefaultHeader requestHeader = DefaultHeader.requestHeaderBuilder()
+				.url("test/helloWithoutLogin")
+				.build();
+		
+		DefaultDTO dto = DefaultDTO.buidler()
+				.msgType(MsgTypeEnum.REQUEST.getValue())
+				.header(requestHeader)
+				.body(model)
+				.build();
+		
+		processor.send(dto);
 		
 	}
 	
 	class ParamsModel{
 		
-		private String deviceName;
-		private double longitude;
-		private double latitude;
-		public String getDeviceName() {
-			return deviceName;
+		private String deviceId;
+
+		public String getDeviceId() {
+			return deviceId;
 		}
-		public void setDeviceName(String deviceName) {
-			this.deviceName = deviceName;
+
+		public void setDeviceId(String deviceId) {
+			this.deviceId = deviceId;
 		}
-		public double getLongitude() {
-			return longitude;
-		}
-		public void setLongitude(double longitude) {
-			this.longitude = longitude;
-		}
-		public double getLatitude() {
-			return latitude;
-		}
-		public void setLatitude(double latitude) {
-			this.latitude = latitude;
-		}
+		
 		
 	}
 	
