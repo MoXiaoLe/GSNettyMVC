@@ -1,4 +1,4 @@
-package com.gosuncn.netty.core.common;
+package com.gosuncn.netty.core.model;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,9 +1,9 @@
-package com.gosuncn.netty.core.common;
+package com.gosuncn.netty.core.model;
 
 import java.util.Map;
 
 import com.gosuncn.netty.common.util.JsonUtils.Node;
-import com.gosuncn.netty.core.model.DefaultHeader;
+import com.gosuncn.netty.core.common.IocContainer;
 
 import io.netty.channel.Channel;
 

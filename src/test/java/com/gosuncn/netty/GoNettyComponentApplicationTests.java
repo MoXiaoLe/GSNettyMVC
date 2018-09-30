@@ -1,24 +1,17 @@
 package com.gosuncn.netty;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.Scanner;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import com.gosuncn.netty.common.util.JsonUtils;
-import com.gosuncn.netty.core.accepter.DefaultClientMsgAccepter;
-import com.gosuncn.netty.core.codec.DefaultDecoder;
-import com.gosuncn.netty.core.codec.DefaultEncoder;
-import com.gosuncn.netty.core.model.BodyTypeEnum;
 import com.gosuncn.netty.core.model.DefaultDTO;
-import com.gosuncn.netty.core.model.DefaultRequestHeader;
+import com.gosuncn.netty.core.model.DefaultHeader;
 import com.gosuncn.netty.core.model.MsgTypeEnum;
 import com.gosuncn.netty.core.processor.ClientNettyProcessor;
+import com.gosuncn.netty.core.processor.GoNettyProcessor;
+
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -30,53 +23,49 @@ public class GoNettyComponentApplicationTests {
 	@Before
 	public void init() throws Exception{
 		
-		processor = new ClientNettyProcessor("169.254.204.125", 8080);
-		List<Class<?>> handlerClazzList = new ArrayList<>();
-		handlerClazzList.add(DefaultDecoder.class);
-		handlerClazzList.add(DefaultEncoder.class);
-		handlerClazzList.add(DefaultClientMsgAccepter.class);
-		processor.start(handlerClazzList);
+		processor = GoNettyProcessor.clientBuilder()
+						.host("169.254.204.125")
+						.port(8080)
+						.build();
+		processor.start();
 		
 	}
 	
 	@Test
 	public void send(){
 		
-		DefaultRequestHeader requestHeader = new DefaultRequestHeader();
-		requestHeader.setRequestType(BodyTypeEnum.JSON.getValue());
-		requestHeader.setUrl("169.254.204.125:8080/xiaomo/hello");
-		DefaultDTO dto = new DefaultDTO();
-		dto.setMsgType(MsgTypeEnum.REQUEST.getValue());
-		dto.setHeader(requestHeader);
-		dto.setHeaderLen((short)requestHeader.getBytes().length);
-		City city = new City();
-		byte[] body = JsonUtils.toJsonString(city).getBytes(Charset.forName("UTF-8"));
-		dto.setBodyLen(body.length);
-		dto.setBody(body);
+		ParamsModel model = new ParamsModel();
+		model.setDeviceName("中国北斗系列第七号卫星");
+		model.setLatitude(132.68);
+		model.setLongitude(326.66);
+		
+		DefaultHeader requestHeader = DefaultHeader.requestHeaderBuilder()
+				.url("xiaomo/hello")
+				.build();
+		
+		DefaultDTO dto = DefaultDTO.buidler()
+				.msgType(MsgTypeEnum.REQUEST.getValue())
+				.header(requestHeader)
+				.body(model)
+				.build();
+		
 		processor.send(dto);
 		
 		
-		System.out.println("结束单元测试");
+		pause();
 		
 	}
 	
-	static class City{
+	class ParamsModel{
 		
-		private String name = "肇庆";
-		private String code = "zhaoqing";
-		private double longitude = 102.43;
-		private double latitude = 231.90;
-		public String getName() {
-			return name;
+		private String deviceName;
+		private double longitude;
+		private double latitude;
+		public String getDeviceName() {
+			return deviceName;
 		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public String getCode() {
-			return code;
-		}
-		public void setCode(String code) {
-			this.code = code;
+		public void setDeviceName(String deviceName) {
+			this.deviceName = deviceName;
 		}
 		public double getLongitude() {
 			return longitude;
@@ -91,10 +80,24 @@ public class GoNettyComponentApplicationTests {
 			this.latitude = latitude;
 		}
 		
-		
-		
-		
-		
 	}
+	
+	public void pause(){
+		
+		try{
+			Thread.sleep(5000);
+		}catch(Exception e){
+		}
+		
+		System.out.println("输入 stop 结束客户端");
+		Scanner scanner = new Scanner(System.in);
+		String str = scanner.nextLine();
+		while(!"stop".equals(str)){
+			System.out.println("输入 stop 结束客户端");
+			str = scanner.nextLine();
+		}
+		scanner.close();
+	}
+	
 
 }

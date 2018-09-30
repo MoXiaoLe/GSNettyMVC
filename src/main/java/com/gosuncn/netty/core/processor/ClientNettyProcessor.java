@@ -4,6 +4,8 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 import com.gosuncn.netty.common.util.LoggerUtils;
+import com.gosuncn.netty.core.model.DefaultDTO;
+import com.gosuncn.netty.core.model.DefaultRequestHeader;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -21,7 +23,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  * @date 2018年9月27日
  * @description 客户端处理入口
  */
-public class ClientNettyProcessor implements GoNettyProcessor{
+public class ClientNettyProcessor extends GoNettyProcessor{
 
 	/**服务机IP*/
     private String host;
@@ -33,15 +35,18 @@ public class ClientNettyProcessor implements GoNettyProcessor{
     private Channel channel;
     /**线程组*/
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
+    /**通道处理器*/
+    private List<Class<? extends ChannelHandler>> handlerClazzList;
     
-    public ClientNettyProcessor(String host, int port) {
+    public ClientNettyProcessor(String host, int port,List<Class<? extends ChannelHandler>> handlerClazzList) {
 		super();
 		this.host = host;
 		this.port = port;
+		this.handlerClazzList = handlerClazzList;
 	}
 
 	@Override
-	public void start(final List<Class<?>> handlerClazzList) throws Exception {
+	public void start() throws Exception {
 		
 		LoggerUtils.info("启动客户端");
 		// 设置循环线程组
@@ -84,6 +89,13 @@ public class ClientNettyProcessor implements GoNettyProcessor{
                 LoggerUtils.warn("连接远程主机失败，失败原因-{}",e.getMessage(),e);
             }
         }
+        
+        if(message instanceof DefaultDTO){
+        	DefaultDTO dto = (DefaultDTO)message;
+        	DefaultRequestHeader header = (DefaultRequestHeader)dto.getHeader();
+        	header.setUrl(host + ":" + port + "/" + header.getUrl()); 
+        }
+        
         channel.writeAndFlush(message);
     }
 }

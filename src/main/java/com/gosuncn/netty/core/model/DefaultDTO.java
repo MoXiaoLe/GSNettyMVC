@@ -1,5 +1,8 @@
 package com.gosuncn.netty.core.model;
 
+import java.nio.charset.Charset;
+
+import com.gosuncn.netty.common.util.JsonUtils;
 
 /**
  * 
@@ -61,6 +64,60 @@ public class DefaultDTO extends Serializer{
 			throw new RuntimeException("不支持的报文类型");
 		}
 		this.writeBytes(this.body);
+		
+	}
+	
+	public static Builder buidler(){
+		return new Builder();
+	}
+	
+	public static class Builder{
+		private Byte msgType; 
+		private DefaultHeader header; 
+		private byte[] body;
+		
+		public DefaultDTO build() throws NullPointerException{
+			
+			DefaultDTO defaultDTO = new DefaultDTO();
+			if(msgType == null){
+				throw new RuntimeException("消息类型（请求或响应）不能为空");
+			}
+			if(header == null){
+				throw new RuntimeException("报文头不能为空");
+			}
+			defaultDTO.setMsgType(this.msgType);
+			defaultDTO.setHeaderLen(this.header.getLength());
+			defaultDTO.setHeader(header);
+			if(body == null){
+				defaultDTO.setBodyLen(0);
+				defaultDTO.setBody(new byte[0]);
+			}else{
+				defaultDTO.setBodyLen(body.length);
+				defaultDTO.setBody(body);
+			}
+			return defaultDTO;
+		}
+		
+		public Builder msgType(byte msgType){
+			this.msgType = msgType;
+			return this;
+		}
+		
+		public Builder header(DefaultHeader header) {
+			this.header = header;
+			return this;
+		}
+		
+		public Builder body(byte[] body) {
+			this.body = body;
+			return this;
+		}
+		
+		public Builder body(Object obj){
+			this.body = JsonUtils.toJsonString(obj)
+					.getBytes(Charset.forName("UTF-8"));
+			return this;
+		}
 		
 	}
 

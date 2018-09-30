@@ -1,6 +1,5 @@
 package com.gosuncn.netty.core.accepter;
 
-import com.gosuncn.netty.common.util.JsonUtils;
 import com.gosuncn.netty.common.util.LoggerUtils;
 import com.gosuncn.netty.core.model.DefaultDTO;
 
@@ -22,7 +21,9 @@ public class DefaultClientMsgAccepter extends SimpleChannelInboundHandler<Defaul
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, DefaultDTO msg) throws Exception {
 		
-		LoggerUtils.info("客户端接收到消息-{}",JsonUtils.toJsonString(msg));
+		//LoggerUtils.info("客户端接收到消息-{}",JsonUtils.toJsonString(msg));
+		
+		LoggerUtils.info("客户端接收到消息体-{}",new String(msg.getBody(),"UTF-8"));
 		
 	}
 	

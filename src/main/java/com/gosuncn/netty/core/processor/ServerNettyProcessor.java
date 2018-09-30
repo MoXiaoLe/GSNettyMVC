@@ -22,33 +22,31 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * @date 2018年9月27日
  * @description 服务端处理入口
  */
-public class ServerNettyProcessor implements GoNettyProcessor{
+public class ServerNettyProcessor extends GoNettyProcessor{
 
 	/**监听端口*/
-    private int port = 8080;
+    private int port;
     /**缓冲池队列大小*/
-    private int buffSize = 2048;
+    private int buffSize;
     /**netty核心服务类*/
     private ServerBootstrap bootstrap = new ServerBootstrap();
     /**boss 线程组*/
     private EventLoopGroup bossGroup = new NioEventLoopGroup();
     /** worker线程组*/
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
+    /**通道处理器*/
+    private List<Class<? extends ChannelHandler>> handlerClazzList;
     
-	public ServerNettyProcessor() {
-		super();
-		IocContainer.initContext(this.port);
-	}
-	
-	public ServerNettyProcessor(int port, int buffSize) {
+	public ServerNettyProcessor(int port, int buffSize,List<Class<? extends ChannelHandler>> handlerClazzList) {
 		super();
 		this.port = port;
 		this.buffSize = buffSize;
+		this.handlerClazzList = handlerClazzList;
 		IocContainer.initContext(port);
 	}
 
 	@Override
-	public void start(final List<Class<?>> handlerClazzList) throws Exception {
+	public void start() throws Exception {
 
 		LoggerUtils.info("开始启动服务器");
 		try {

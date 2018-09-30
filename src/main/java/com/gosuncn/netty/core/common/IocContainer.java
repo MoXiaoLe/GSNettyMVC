@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.gosuncn.netty.common.util.INetUtils;
+import com.gosuncn.netty.core.model.GoContext;
+import com.gosuncn.netty.core.model.GoSession;
 
 
 /**
