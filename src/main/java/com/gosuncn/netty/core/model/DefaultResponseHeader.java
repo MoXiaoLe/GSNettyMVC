@@ -17,7 +17,7 @@ public class DefaultResponseHeader extends DefaultHeader{
 	@Override
 	protected void read() {
 		
-		this.status = this.readByte();
+		this.status = this.readShort();
 		this.responseType = this.readByte();
 	
 	}

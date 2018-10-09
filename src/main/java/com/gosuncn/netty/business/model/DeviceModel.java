@@ -4,7 +4,8 @@ public class DeviceModel {
 	
 	private String deviceId;
 	private String deviceName;
-	private String deviceType;
+	private String deviceProducer;
+	private int deviceType;
 	private double longitude;
 	private double latitude;
 	public String getDeviceId() {
@@ -19,10 +20,10 @@ public class DeviceModel {
 	public void setDeviceName(String deviceName) {
 		this.deviceName = deviceName;
 	}
-	public String getDeviceType() {
+	public int getDeviceType() {
 		return deviceType;
 	}
-	public void setDeviceType(String deviceType) {
+	public void setDeviceType(int deviceType) {
 		this.deviceType = deviceType;
 	}
 	public double getLongitude() {
@@ -36,6 +37,12 @@ public class DeviceModel {
 	}
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
+	}
+	public String getDeviceProducer() {
+		return deviceProducer;
+	}
+	public void setDeviceProducer(String deviceProducer) {
+		this.deviceProducer = deviceProducer;
 	} 
 	
 }

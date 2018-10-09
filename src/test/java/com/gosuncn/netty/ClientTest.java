@@ -5,6 +5,9 @@ import java.util.Scanner;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.gosuncn.netty.core.model.BodyTypeInface;
 import com.gosuncn.netty.core.model.DefaultDTO;
@@ -14,9 +17,9 @@ import com.gosuncn.netty.core.processor.ClientNettyProcessor;
 import com.gosuncn.netty.core.processor.GoNettyProcessor;
 
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-public class GoNettyComponentApplicationTests {
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ClientTest {
 	
 	private ClientNettyProcessor processor;
 
@@ -35,12 +38,9 @@ public class GoNettyComponentApplicationTests {
 	@Test
 	public void test(){
 		
-		getDeviceInfoWithLogin();
-		getDeviceInfoWithoutLogin();
+		getDeviceInfo();
 		login();
-		getDeviceInfoWithLogin();
-		getDeviceInfoWithoutLogin();
-		
+		getDeviceInfo();
 		pause();
 		
 	}
@@ -49,26 +49,30 @@ public class GoNettyComponentApplicationTests {
 	public void login(){
 		
 		DefaultHeader requestHeader = DefaultHeader.requestHeaderBuilder()
+				.requestType(BodyTypeInface.FORM)
 				.url("test/login")
 				.build();
 		
 		DefaultDTO dto = DefaultDTO.buidler()
 				.msgType(MsgTypeInface.REQUEST)
 				.header(requestHeader)
+				.keyValue("username", "xiaomo")
+				.keyValue("password", "123456")
 				.build();
 		
 		processor.send(dto);
 		
-		
 	}
 	
-	public void getDeviceInfoWithLogin(){
+	public void getDeviceInfo(){
 		
 		ParamsModel model = new ParamsModel();
-		model.setDeviceId("666666");
+		model.setDeviceProducer("高新兴科技");
+		model.setDeviceType(123);
 		
 		DefaultHeader requestHeader = DefaultHeader.requestHeaderBuilder()
-				.url("test/helloWithLogin")
+				.url("test/deviceInfo")
+				.requestType(BodyTypeInface.JSON)
 				.build();
 		
 		DefaultDTO dto = DefaultDTO.buidler()
@@ -81,40 +85,27 @@ public class GoNettyComponentApplicationTests {
 		
 	}
 	
-	public void getDeviceInfoWithoutLogin(){
-		
-		ParamsModel model = new ParamsModel();
-		model.setDeviceId("666666");
-		
-		DefaultHeader requestHeader = DefaultHeader.requestHeaderBuilder()
-				.url("test/helloWithoutLogin")
-				.requestType(BodyTypeInface.FORM)
-				.build();
-		
-		DefaultDTO dto = DefaultDTO.buidler()
-				.msgType(MsgTypeInface.REQUEST)
-				.header(requestHeader)
-				.keyValue("name", "xiaomo")
-				.keyValue("address", "zhaoqing")
-				.build();
-		
-		processor.send(dto);
-		
-	}
-	
 	class ParamsModel{
 		
-		private String deviceId;
+		private String deviceProducer;
+		private int deviceType;
 
-		public String getDeviceId() {
-			return deviceId;
+		public String getDeviceProducer() {
+			return deviceProducer;
 		}
 
-		public void setDeviceId(String deviceId) {
-			this.deviceId = deviceId;
+		public void setDeviceProducer(String deviceProducer) {
+			this.deviceProducer = deviceProducer;
 		}
-		
-		
+
+		public int getDeviceType() {
+			return deviceType;
+		}
+
+		public void setDeviceType(int deviceType) {
+			this.deviceType = deviceType;
+		}
+	
 	}
 	
 	public void pause(){
@@ -134,5 +125,4 @@ public class GoNettyComponentApplicationTests {
 		scanner.close();
 	}
 	
-
 }
