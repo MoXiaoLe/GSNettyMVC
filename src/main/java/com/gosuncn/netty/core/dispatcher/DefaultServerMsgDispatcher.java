@@ -5,11 +5,14 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+
 import com.gosuncn.netty.common.util.INetUtils;
 import com.gosuncn.netty.common.util.JsonUtils.Node;
 import com.gosuncn.netty.common.util.LoggerUtils;
 import com.gosuncn.netty.core.common.InvokerHolder;
 import com.gosuncn.netty.core.common.IocContainer;
+import com.gosuncn.netty.core.model.BodyTypeInface;
 import com.gosuncn.netty.core.model.DefaultDTO;
 import com.gosuncn.netty.core.model.DefaultHeader;
 import com.gosuncn.netty.core.model.DefaultRequestHeader;
@@ -17,7 +20,9 @@ import com.gosuncn.netty.core.model.GoContext;
 import com.gosuncn.netty.core.model.GoRequest;
 import com.gosuncn.netty.core.model.GoResponse;
 import com.gosuncn.netty.core.model.GoSession;
-import com.gosuncn.netty.core.model.MsgTypeEnum;
+import com.gosuncn.netty.core.model.MsgTypeInface;
+import com.gosuncn.netty.core.model.ResponseStatusCodeEnum;
+import com.gosuncn.netty.core.model.Serializer;
 
 /**
  * 
@@ -54,46 +59,43 @@ public class DefaultServerMsgDispatcher {
 		url = url.replaceFirst(INetUtils.REGEX_IP + ":" + port,"").replaceAll("/+", "/");
 		InvokerHolder invoker = IocContainer.getInvokerHolder(url);
 		if(invoker == null){
-			LoggerUtils.warn("找不到对应的执行方法,响应状态码：1");
 			DefaultHeader responseHeader = DefaultHeader.responseHeaderBuilder()
-					.status((byte)1).build();
+					.status(ResponseStatusCodeEnum.NOT_FOND.getCode()).build();
 			DefaultDTO dto = DefaultDTO.buidler()
-					.msgType(MsgTypeEnum.RESPONSE.getValue())
+					.msgType(MsgTypeInface.RESPONSE)
 					.header(responseHeader).build();
 			response.getChannel().writeAndFlush(dto);
 		}else{
 			try {
 				Method method = invoker.getMethod();
+				LocalVariableTableParameterNameDiscoverer nameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+				String[] paramsNames = nameDiscoverer.getParameterNames(method);
 				Class<?>[] paramsClazzs = method.getParameterTypes();
 				Object[] params = new Object[paramsClazzs.length];
 				for(int i=0;i<paramsClazzs.length;i++){
-					params[i] =  buildByClazz(paramsClazzs[i],request,response);
+					params[i] =  buildByClazz(paramsNames[i],paramsClazzs[i],request,response);
 				}
 				Object retResult = method.invoke(invoker.getObj(),params);
-				LoggerUtils.info("返回对象-{}",retResult);
 				if(retResult != null){
-					LoggerUtils.info("返回对象类型-{}",retResult.getClass().getName());
-					
 					DefaultHeader responseHeader = DefaultHeader
 							.responseHeaderBuilder().build();
 					DefaultDTO dto = DefaultDTO.buidler()
-							.msgType(MsgTypeEnum.RESPONSE.getValue())
+							.msgType(MsgTypeInface.RESPONSE)
 							.header(responseHeader).body(retResult).build();
 					response.getChannel().writeAndFlush(dto);
 				}
 			} catch (Exception e) {
-				LoggerUtils.warn("执行出错，响应状态码：2-{}",e.getMessage(),e);
 				DefaultHeader responseHeader = DefaultHeader.responseHeaderBuilder()
-						.status((byte)2).build();
+						.status(ResponseStatusCodeEnum.ERROR.getCode()).build();
 				DefaultDTO dto = DefaultDTO.buidler()
-						.msgType(MsgTypeEnum.RESPONSE.getValue())
+						.msgType(MsgTypeInface.RESPONSE)
 						.header(responseHeader).build();
 				response.getChannel().writeAndFlush(dto);
 			}
 		}
 	}
 	
-	private Object buildByClazz(Class<?> clazz,GoRequest request,GoResponse response){
+	private Object buildByClazz(String fieldName,Class<?> clazz,GoRequest request,GoResponse response){
 		
 		if(clazz == GoRequest.class){
 			return request;
@@ -104,17 +106,26 @@ public class DefaultServerMsgDispatcher {
 		}else if(clazz == GoSession.class){
 			return request.getSession();
 		}else{
+			
+			DefaultRequestHeader header = (DefaultRequestHeader)request.getHeader();
 			try {
-				LoggerUtils.info("创建-{}",clazz.getName());
 				Object obj = clazz.newInstance();
-				Field[] fields = clazz.getDeclaredFields();
-				for(Field field : fields){
-					fillValue4Field(field,obj,request.getParamsNode());
+				if(header.getRequestType() == BodyTypeInface.JSON){
+					Field[] fields = clazz.getDeclaredFields();
+					for(Field field : fields){
+						fillValue4Field(field,obj,request.getParamsNode());
+					}
+				}else if(header.getRequestType() == BodyTypeInface.FORM){
+					return request.getParameter(fieldName);
+				}else if(header.getRequestType() == BodyTypeInface.SERIALIZER){
+					if(obj instanceof Serializer){
+						((Serializer)obj).readFromBytes(request.getParamsSerializerBytes());
+					}
 				}
-				return obj;
+				return obj;		
 			} catch (Exception e) {
 				LoggerUtils.warn("创建参数异常-{}",e.getMessage(),e);
-			} 		
+			} 
 			return null;
 		}
 	}
@@ -135,12 +146,8 @@ public class DefaultServerMsgDispatcher {
 		Object value = null;
 		Object temp = null;
 		String key = field.getName();
-		//LoggerUtils.info("填充-{}",key);
 		if(key.equals(node.getKey())){
-			//LoggerUtils.info("找到目标key-{}",key);
-			//LoggerUtils.info("寻找目标clazz-{}",clazz.getName());
 			temp = node.getValue();
-			//LoggerUtils.info("解析出的clazz-{}",temp.getClass().getName());
 			if(clazz == short.class || clazz == Short.class){
 				if(temp instanceof Byte){
 					value = ((Byte)temp).shortValue();

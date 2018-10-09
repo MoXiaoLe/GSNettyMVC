@@ -9,7 +9,7 @@ package com.gosuncn.netty.core.model;
 public class DefaultResponseHeader extends DefaultHeader{
 
 	/**响应状态码*/
-	private byte status;
+	private short status;
 	
 	/**响应类型*/
 	private byte responseType;
@@ -25,17 +25,17 @@ public class DefaultResponseHeader extends DefaultHeader{
 	@Override
 	protected void write() {
 		
-		this.writeByte(this.status);
+		this.writeShort(this.status);
 		this.writeByte(this.responseType);
 		
 	}
 	
 
-	public byte getStatus() {
+	public short getStatus() {
 		return status;
 	}
 
-	public void setStatus(byte status) {
+	public void setStatus(short status) {
 		this.status = status;
 	}
 

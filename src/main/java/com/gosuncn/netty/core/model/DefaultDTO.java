@@ -13,7 +13,7 @@ import com.gosuncn.netty.common.util.JsonUtils;
 public class DefaultDTO extends Serializer{
 
 	/**报文开始标志*/
-	private int startFlag = CodecConst.START_FLAG;
+	private int startFlag = CodecConstInface.START_FLAG;
 	
 	/**报文类型（区分是请求还是响应）*/
 	private byte msgType;
@@ -38,9 +38,9 @@ public class DefaultDTO extends Serializer{
 		this.msgType = this.readByte();
 		this.headerLen = this.readShort();
 		this.bodyLen = this.readInt();
-		if(this.msgType == MsgTypeEnum.REQUEST.getValue()){
+		if(this.msgType == MsgTypeInface.REQUEST){
 			this.header = this.readObject(DefaultRequestHeader.class);
-		}else if(this.msgType == MsgTypeEnum.RESPONSE.getValue()){
+		}else if(this.msgType == MsgTypeInface.RESPONSE){
 			this.header = this.readObject(DefaultResponseHeader.class);
 		}else{
 			throw new RuntimeException("不支持的报文类型");
@@ -56,9 +56,9 @@ public class DefaultDTO extends Serializer{
 		this.writeByte(this.msgType);
 		this.writeShort(this.headerLen);
 		this.writeInt(this.bodyLen);
-		if(this.msgType == MsgTypeEnum.REQUEST.getValue()){
+		if(this.msgType == MsgTypeInface.REQUEST){
 			this.writeObject(this.header, DefaultRequestHeader.class);
-		}else if(this.msgType == MsgTypeEnum.RESPONSE.getValue()){
+		}else if(this.msgType == MsgTypeInface.RESPONSE){
 			this.writeObject(this.header, DefaultResponseHeader.class);
 		}else{
 			throw new RuntimeException("不支持的报文类型");
@@ -75,15 +75,16 @@ public class DefaultDTO extends Serializer{
 		private Byte msgType; 
 		private DefaultHeader header; 
 		private byte[] body;
+		private StringBuilder paramsSb;
 		
 		public DefaultDTO build() throws NullPointerException{
 			
 			DefaultDTO defaultDTO = new DefaultDTO();
 			if(msgType == null){
-				throw new RuntimeException("消息类型（请求或响应）不能为空");
+				throw new NullPointerException("消息类型（请求或响应）不能为空");
 			}
 			if(header == null){
-				throw new RuntimeException("报文头不能为空");
+				throw new NullPointerException("报文头不能为空");
 			}
 			defaultDTO.setMsgType(this.msgType);
 			defaultDTO.setHeaderLen(this.header.getLength());
@@ -113,9 +114,26 @@ public class DefaultDTO extends Serializer{
 			return this;
 		}
 		
+		/**json方式*/
 		public Builder body(Object obj){
 			this.body = JsonUtils.toJsonString(obj)
 					.getBytes(Charset.forName("UTF-8"));
+			return this;
+		}
+		
+		/**serializer方式*/
+		public Builder body(Serializer serializer){
+			this.body = serializer.getBytes();
+			return this;
+		}
+		
+		/**form表单方式*/
+		public Builder keyValue(String key,String value){
+			if(paramsSb == null){
+				paramsSb = new StringBuilder();
+			}
+			paramsSb.append("&" + key + "=" + value);
+			this.body = paramsSb.toString().getBytes(Charset.forName("UTF-8"));
 			return this;
 		}
 		

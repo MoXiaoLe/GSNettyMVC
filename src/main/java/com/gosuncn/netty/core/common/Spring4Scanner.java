@@ -7,8 +7,11 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
 import com.gosuncn.netty.common.util.LoggerUtils;
+import com.gosuncn.netty.core.accepter.MsgListener;
+import com.gosuncn.netty.core.annotation.GoClientMsgListener;
 import com.gosuncn.netty.core.annotation.GoController;
 import com.gosuncn.netty.core.annotation.GoRequestMapping;
+import com.gosuncn.netty.core.annotation.GoServerMsgListener;
 /**
  * 
  * @author mojiale66@163.com
@@ -24,6 +27,9 @@ public class Spring4Scanner implements BeanPostProcessor{
 		// 扫描GoController 注解
 		scannerGoController(bean);
 		
+		// 扫描 GoClientMsgListener 、 GoServerMsgListener 注解
+		scannerMsgListener(bean);
+		
 		return BeanPostProcessor.super.postProcessAfterInitialization(bean, beanName);
 	}
 
@@ -32,6 +38,22 @@ public class Spring4Scanner implements BeanPostProcessor{
 		return BeanPostProcessor.super.postProcessBeforeInitialization(bean, beanName);
 	}
 	
+	
+	private void scannerMsgListener(Object bean){
+		
+		if(bean instanceof MsgListener){
+			
+			GoClientMsgListener clientMsgListener = bean.getClass().getAnnotation(GoClientMsgListener.class);
+			GoServerMsgListener serverMsgListener = bean.getClass().getAnnotation(GoServerMsgListener.class);
+			if(clientMsgListener != null){
+				IocContainer.putMsgListener("clientMsgListener", (MsgListener) bean);
+			}
+			if(serverMsgListener != null){
+				IocContainer.putMsgListener("serverMsgListener", (MsgListener) bean);
+			}
+		}
+		
+	}
 	
 	private void scannerGoController(Object bean){
 		

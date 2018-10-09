@@ -1,6 +1,6 @@
 package com.gosuncn.netty.core.accepter;
 
-import com.gosuncn.netty.common.util.LoggerUtils;
+import com.gosuncn.netty.core.common.IocContainer;
 import com.gosuncn.netty.core.model.DefaultDTO;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -14,6 +14,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class DefaultClientMsgAccepter extends SimpleChannelInboundHandler<DefaultDTO>{
 
+	private MsgListener msgListener = IocContainer.getMsgListener("clientMsgListener"); 
+	
 	
 	/**
 	 * 请求回调，每一次接收到请求数据均会回调该方法
@@ -21,9 +23,9 @@ public class DefaultClientMsgAccepter extends SimpleChannelInboundHandler<Defaul
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, DefaultDTO msg) throws Exception {
 		
-		//LoggerUtils.info("客户端接收到消息-{}",JsonUtils.toJsonString(msg));
-		
-		LoggerUtils.info("客户端接收到消息体-{}",new String(msg.getBody(),"UTF-8"));
+		if(msgListener != null){
+			msgListener.onMsgRead(ctx, msg);
+		}
 		
 	}
 	
@@ -34,7 +36,9 @@ public class DefaultClientMsgAccepter extends SimpleChannelInboundHandler<Defaul
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		
-		LoggerUtils.info("客户端与远程主机建立连接");
+		if(msgListener != null){
+			msgListener.onChannelConnected(ctx);
+		}
 		
 		super.channelActive(ctx);
 	}
@@ -47,7 +51,9 @@ public class DefaultClientMsgAccepter extends SimpleChannelInboundHandler<Defaul
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		
-		LoggerUtils.info("客户端与远程主机断开连接");
+		if(msgListener != null){
+			msgListener.onChannelDisconnect(ctx);
+		}
 		
 		super.channelInactive(ctx);
 	}
@@ -59,9 +65,10 @@ public class DefaultClientMsgAccepter extends SimpleChannelInboundHandler<Defaul
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		
-		LoggerUtils.info("抛出异常-{}",cause.getMessage(),cause);
-		
-		super.exceptionCaught(ctx, cause);
+		// 异常处理
+		if(msgListener != null){
+			msgListener.onExceptionCaught(ctx, cause);
+		}
 	}
 
 }

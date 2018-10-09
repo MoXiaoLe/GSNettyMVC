@@ -7,6 +7,7 @@ import com.gosuncn.netty.common.util.JsonUtils;
 import com.gosuncn.netty.common.util.LoggerUtils;
 import com.gosuncn.netty.core.annotation.GoController;
 import com.gosuncn.netty.core.annotation.GoRequestMapping;
+import com.gosuncn.netty.core.model.GoRequest;
 import com.gosuncn.netty.core.model.GoSession;
 
 @GoController
@@ -49,10 +50,12 @@ public class TestController {
 	}
 	
 	@GoRequestMapping(path = "helloWithoutLogin")
-	public DeviceModel testMsg(DeviceModel model,GoSession session){
+	public DeviceModel testMsg(String name,String address
+			,GoRequest request,GoSession session){
 		
-		LoggerUtils.info("消息-{}",JsonUtils.toJsonString(model));
-		
+		LoggerUtils.info(name);
+		LoggerUtils.info(address);
+		DeviceModel model = new DeviceModel();
 		model.setDeviceType("航天定位卫星");
 		model.setDeviceName("中国北斗系列第七号卫星");
 		model.setLatitude(132.68);

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.gosuncn.netty.common.util.INetUtils;
+import com.gosuncn.netty.core.accepter.MsgListener;
 import com.gosuncn.netty.core.model.GoContext;
 import com.gosuncn.netty.core.model.GoSession;
 
@@ -22,6 +23,10 @@ public class IocContainer {
 	private static Map<String,GoSession> sessionHolderMap = new ConcurrentHashMap<String,GoSession>(); 
 	/**执行器集合*/
 	private static Map<String,InvokerHolder> invokerHolderMap = new ConcurrentHashMap<String, InvokerHolder>();
+	/**消息回调监听器*/
+	private static Map<String,MsgListener> msgListenerHolderMap = new ConcurrentHashMap<String, MsgListener>();
+	
+	
 	/**初始化上下文对象*/
 	public static void initContext(int port){
 		goContext = GoContext.newInstance(INetUtils.getLocalIP(),port);
@@ -64,5 +69,18 @@ public class IocContainer {
 		return goContext;
 	}
 	
+	public static void putMsgListener(String key,MsgListener msgListener){
+		
+		MsgListener listener = msgListenerHolderMap.get(key);
+		if(listener != null){
+			throw new RuntimeException(key + "-消息回调监听器重复");
+		}
+		msgListenerHolderMap.put(key, msgListener);
+	}
+	
+	public static MsgListener getMsgListener(String key){
+		
+		return msgListenerHolderMap.get(key);
+	}
 	
 }

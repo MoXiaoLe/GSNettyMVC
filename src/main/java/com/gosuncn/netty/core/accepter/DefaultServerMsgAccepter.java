@@ -1,13 +1,17 @@
 package com.gosuncn.netty.core.accepter;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.gosuncn.netty.common.util.JsonUtils;
 import com.gosuncn.netty.common.util.JsonUtils.Node;
-import com.gosuncn.netty.common.util.LoggerUtils;
 import com.gosuncn.netty.core.common.IocContainer;
 import com.gosuncn.netty.core.dispatcher.DefaultServerMsgDispatcher;
-import com.gosuncn.netty.core.model.BodyTypeEnum;
+import com.gosuncn.netty.core.model.BodyTypeInface;
 import com.gosuncn.netty.core.model.DefaultDTO;
 import com.gosuncn.netty.core.model.DefaultHeader;
 import com.gosuncn.netty.core.model.DefaultRequestHeader;
@@ -28,6 +32,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<DefaultDTO>{
 	
+	private MsgListener msgListener = IocContainer.getMsgListener("serverMsgListener"); 
+	
 	/**
 	 * 请求回调，每一次接收到请求数据均会回调该方法
 	 */
@@ -44,6 +50,10 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 		GoRequest request = GoRequest.newInstance(channel, header, body);
 		GoResponse response = GoResponse.newInstance(channel, null, null);
 		service(request, response);
+		
+		if(msgListener != null){
+			msgListener.onMsgRead(ctx, msg);
+		}
 		
 	}
 	
@@ -63,6 +73,10 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 			throw new Exception("创建session异常");
 		}
 		
+		if(msgListener != null){
+			msgListener.onChannelConnected(ctx);
+		}
+		
 		super.channelActive(ctx);
 	}
 	
@@ -79,6 +93,10 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 		String channelId = channel.id().asLongText();
 		IocContainer.removeSession(channelId);
 		
+		if(msgListener != null){
+			msgListener.onChannelDisconnect(ctx);
+		}
+		
 		super.channelInactive(ctx);
 	}
 	
@@ -90,28 +108,74 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		
 		// 异常处理
-		LoggerUtils.warn("抛出异常-{}",cause.getMessage(),cause);
-		//super.exceptionCaught(ctx, cause);
+		if(msgListener != null){
+			msgListener.onExceptionCaught(ctx, cause);
+		}
 		
 	}
 	
 	protected void service(GoRequest goRequest,GoResponse goResponse) {
 		
 		// 对 body 进行解码
-		DefaultRequestHeader header = (DefaultRequestHeader)goRequest.getHeader();
-		byte bodyType = header.getRequestType();
-		if(bodyType == BodyTypeEnum.JSON.getValue()){
-			byte[] body = goRequest.getBody();
-			if(body != null && body.length > 0){
-				String data = new String(body,Charset.forName("UTF-8"));
-				Node node = JsonUtils.getNodeFromJsonString(data);
+		byte[] body = goRequest.getBody();
+		if(body != null && body.length > 0){
+			DefaultRequestHeader header = (DefaultRequestHeader)goRequest.getHeader();
+			byte bodyType = header.getRequestType();
+			if(bodyType == BodyTypeInface.JSON){
+				Node node = getNodeFromBody(body);
 				goRequest.setParamsNode(node);
+			}else if(bodyType == BodyTypeInface.FORM){
+				Map<String,String[]> paramsMap = getParamsMapFromBody(body);
+				goRequest.setParamsMap(paramsMap);
+			}else if(bodyType == BodyTypeInface.SERIALIZER){
+				goRequest.setParamsSerializerBytes(body);
+			}else{
+				throw new RuntimeException("不支持的body类型");
 			}
-		}else{
-			throw new RuntimeException("不支持的body类型");
+			
 		}
+		
 		// 把消息传递到 dispathcher 中
 		DefaultServerMsgDispatcher.newInstance().dispathcher(goRequest, goResponse);		
+	}
+	
+	private Node getNodeFromBody(byte[] body){
+		
+		String data = new String(body,Charset.forName("UTF-8"));
+		Node node = JsonUtils.getNodeFromJsonString(data);
+		return node;
+	}
+	
+	private Map<String, String[]> getParamsMapFromBody(byte[] body){
+		
+		String data = new String(body,Charset.forName("UTF-8"));
+		String[] keyValues = data.replaceAll("&+", "&").split("&");
+		Map<String, List<String>> tempMap = new HashMap<String, List<String>>();
+		for(String keyValue : keyValues){
+			if(!keyValue.contains("=")){
+				continue;
+			}
+			int index = keyValue.indexOf("=");
+			String key = keyValue.substring(0,index);
+			String value = keyValue.substring(index+1);
+			List<String> valueList = tempMap.get(key);
+			if(valueList == null){
+				valueList = new ArrayList<String>();
+				valueList.add(value);
+				tempMap.put(key, valueList);
+			}else{
+				valueList.add(value);
+			}
+		}
+		Map<String, String[]> paramsMap = new HashMap<String,String[]>();
+		for(Entry<String, List<String>> entry : tempMap.entrySet()){
+			List<String> list = entry.getValue();
+			String[] arr = new String[list.size()];
+			arr = list.toArray(arr);
+			paramsMap.put(entry.getKey(), arr);
+		}
+		
+		return paramsMap;
 	}
 
 }

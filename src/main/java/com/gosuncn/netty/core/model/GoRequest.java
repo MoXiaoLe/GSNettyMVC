@@ -27,7 +27,7 @@ public class GoRequest {
 	private byte[] body;
 	
 	/**请求参数对象(BodyTypeEnum.SERIALIZER)*/
-	private Object params;
+	private byte[] paramsSerializerBytes;
 	/**请求参数map(BodyTypeEnum.FORM)*/
 	private Map<String, String[]> paramsMap;
 	/**请求参数Node(BodyTypeEnum.JSON)*/
@@ -84,11 +84,11 @@ public class GoRequest {
 	public void setBody(byte[] body) {
 		this.body = body;
 	}
-	public Object getParams() {
-		return params;
+	public byte[] getParamsSerializerBytes() {
+		return paramsSerializerBytes;
 	}
-	public void setParams(Object params) {
-		this.params = params;
+	public void setParamsSerializerBytes(byte[] paramsSerializerBytes) {
+		this.paramsSerializerBytes = paramsSerializerBytes;
 	}
 	public Node getParamsNode() {
 		return paramsNode;
@@ -97,6 +97,24 @@ public class GoRequest {
 		this.paramsNode = paramsNode;
 	}
 	
+	public String[] getParameterNames(){
+		if(paramsMap != null){
+			String[] strs = new String[paramsMap.keySet().size()];
+			return paramsMap.keySet().toArray(strs);
+		}
+		return new String[0];
+	}
+	
+	public String getParameter(String name){
+		String[] strs = null;
+		if(paramsMap != null){
+			strs = paramsMap.get(name);
+		}
+		if(strs != null && strs.length > 0){
+			return strs[0];
+		}
+		return null;
+	}
 	
 
 }

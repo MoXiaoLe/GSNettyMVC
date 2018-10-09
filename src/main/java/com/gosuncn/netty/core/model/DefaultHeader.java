@@ -28,7 +28,7 @@ public abstract class DefaultHeader extends Serializer{
 
 	public static class RequestHeaderBuilder{
 		private String url;
-		private byte requestType = BodyTypeEnum.JSON.getValue();
+		private byte requestType = BodyTypeInface.JSON;
 		
 		public RequestHeaderBuilder url(String url){
 			
@@ -56,10 +56,10 @@ public abstract class DefaultHeader extends Serializer{
 	}
 	
 	public static class ResponseHeaderBuilder{
-		private byte status = 0;
-		private byte responseType = BodyTypeEnum.JSON.getValue();
+		private short status = 200;
+		private byte responseType = BodyTypeInface.JSON;
 		
-		public ResponseHeaderBuilder status(byte status){
+		public ResponseHeaderBuilder status(short status){
 			
 			this.status = status;
 			return this;

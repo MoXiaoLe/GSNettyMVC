@@ -12,7 +12,7 @@ import com.gosuncn.netty.common.util.LoggerUtils;
 import com.gosuncn.netty.core.common.BufferFactory;
 import com.gosuncn.netty.core.model.DefaultDTO;
 import com.gosuncn.netty.core.model.DefaultResponseHeader;
-import com.gosuncn.netty.core.model.MsgTypeEnum;
+import com.gosuncn.netty.core.model.MsgTypeInface;
 
 import io.netty.buffer.ByteBuf;
 
@@ -34,7 +34,7 @@ public class CodecTest {
 		responseHeader.setStatus((byte)2);
 		
 		defaultDTO = new DefaultDTO();
-		defaultDTO.setMsgType(MsgTypeEnum.RESPONSE.getValue());
+		defaultDTO.setMsgType(MsgTypeInface.RESPONSE);
 		defaultDTO.setHeaderLen((short)responseHeader.getBytes().length);
 		defaultDTO.setHeader(responseHeader);
 		

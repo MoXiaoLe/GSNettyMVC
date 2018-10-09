@@ -32,7 +32,7 @@ public class DefaultHeaderTest {
 		//defaultDTO.setHeaderLen((short)requestHeader.getBytes().length);
 		//defaultDTO.setHeader(requestHeader);
 		
-		defaultDTO.setMsgType(MsgTypeEnum.RESPONSE.getValue());
+		defaultDTO.setMsgType(MsgTypeInface.RESPONSE);
 		defaultDTO.setHeaderLen((short)responseHeader.getBytes().length);
 		defaultDTO.setHeader(responseHeader);
 		

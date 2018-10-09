@@ -6,9 +6,10 @@ import java.util.Scanner;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.gosuncn.netty.core.model.BodyTypeInface;
 import com.gosuncn.netty.core.model.DefaultDTO;
 import com.gosuncn.netty.core.model.DefaultHeader;
-import com.gosuncn.netty.core.model.MsgTypeEnum;
+import com.gosuncn.netty.core.model.MsgTypeInface;
 import com.gosuncn.netty.core.processor.ClientNettyProcessor;
 import com.gosuncn.netty.core.processor.GoNettyProcessor;
 
@@ -52,7 +53,7 @@ public class GoNettyComponentApplicationTests {
 				.build();
 		
 		DefaultDTO dto = DefaultDTO.buidler()
-				.msgType(MsgTypeEnum.REQUEST.getValue())
+				.msgType(MsgTypeInface.REQUEST)
 				.header(requestHeader)
 				.build();
 		
@@ -71,7 +72,7 @@ public class GoNettyComponentApplicationTests {
 				.build();
 		
 		DefaultDTO dto = DefaultDTO.buidler()
-				.msgType(MsgTypeEnum.REQUEST.getValue())
+				.msgType(MsgTypeInface.REQUEST)
 				.header(requestHeader)
 				.body(model)
 				.build();
@@ -87,12 +88,14 @@ public class GoNettyComponentApplicationTests {
 		
 		DefaultHeader requestHeader = DefaultHeader.requestHeaderBuilder()
 				.url("test/helloWithoutLogin")
+				.requestType(BodyTypeInface.FORM)
 				.build();
 		
 		DefaultDTO dto = DefaultDTO.buidler()
-				.msgType(MsgTypeEnum.REQUEST.getValue())
+				.msgType(MsgTypeInface.REQUEST)
 				.header(requestHeader)
-				.body(model)
+				.keyValue("name", "xiaomo")
+				.keyValue("address", "zhaoqing")
 				.build();
 		
 		processor.send(dto);

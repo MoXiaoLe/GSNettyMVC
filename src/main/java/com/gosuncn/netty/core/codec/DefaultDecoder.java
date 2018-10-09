@@ -3,12 +3,12 @@ package com.gosuncn.netty.core.codec;
 import java.util.List;
 
 import com.gosuncn.netty.common.util.LoggerUtils;
-import com.gosuncn.netty.core.model.CodecConst;
+import com.gosuncn.netty.core.model.CodecConstInface;
 import com.gosuncn.netty.core.model.DefaultDTO;
 import com.gosuncn.netty.core.model.DefaultHeader;
 import com.gosuncn.netty.core.model.DefaultRequestHeader;
 import com.gosuncn.netty.core.model.DefaultResponseHeader;
-import com.gosuncn.netty.core.model.MsgTypeEnum;
+import com.gosuncn.netty.core.model.MsgTypeInface;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,19 +27,19 @@ public class DefaultDecoder extends ByteToMessageDecoder{
 				
 		LoggerUtils.debug("解码器开始解码");
 		
-		while(buff.readableBytes() >= CodecConst.BASE_MESSAGE_LEN){
+		while(buff.readableBytes() >= CodecConstInface.BASE_MESSAGE_LEN){
 			// 找到头标志为止
 			while(true){
 				// 标志开始读位置
 				buff.markReaderIndex();
-				if(buff.readInt() == CodecConst.START_FLAG){
+				if(buff.readInt() == CodecConstInface.START_FLAG){
 					break;
 				}
 				buff.resetReaderIndex();
 				buff.readByte();
 				
 				// 可读字节少于基本长度还找不到则返回
-				if(buff.readableBytes() < CodecConst.BASE_MESSAGE_LEN){
+				if(buff.readableBytes() < CodecConstInface.BASE_MESSAGE_LEN){
 					return;
 				}
 			}
@@ -53,10 +53,10 @@ public class DefaultDecoder extends ByteToMessageDecoder{
 			if(len > 0 && buff.readableBytes() >= len){
 				byte[] headerBytes = new byte[headerLen];
 				buff.readBytes(headerBytes);
-				if(msgType == MsgTypeEnum.REQUEST.getValue()){
+				if(msgType == MsgTypeInface.REQUEST){
 					// 请求头
 					header = new DefaultRequestHeader();
-				}else if(msgType == MsgTypeEnum.RESPONSE.getValue()){
+				}else if(msgType == MsgTypeInface.RESPONSE){
 					// 响应头
 					header = new DefaultResponseHeader();
 				}else{

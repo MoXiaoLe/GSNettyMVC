@@ -6,7 +6,7 @@ package com.gosuncn.netty.core.model;
  * @date 2018年9月18日
  * @description 解码编码常量集合
  */
-public interface CodecConst {
+public interface CodecConstInface {
 
 	/**报文头标志*/
 	final int START_FLAG = 199554;
