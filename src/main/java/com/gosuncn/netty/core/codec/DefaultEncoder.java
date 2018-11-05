@@ -12,6 +12,11 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * @author mojiale66@163.com
  * @date 2018年9月21日
  * @description 默认请求编码器
+ * ------------------------------------------------------------------------
+ * | 报文开始标志  | 报文类型     | 报文头长度      | 报文体长度   | 报文头                      |  报文体      |
+ * | startFlag | msgType | headerLen | bodyLen  | header        |  body   |
+ * | int       | byte    | short     | int      | DefaultHeader |  byte[] |
+ * -------------------------------------------------------------------------
  */
 public class DefaultEncoder extends MessageToByteEncoder<DefaultDTO>{
 

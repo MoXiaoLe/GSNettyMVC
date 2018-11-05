@@ -3,7 +3,9 @@ package com.gosuncn.netty.core.dispatcher;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 
@@ -16,10 +18,10 @@ import com.gosuncn.netty.core.model.BodyTypeInface;
 import com.gosuncn.netty.core.model.DefaultDTO;
 import com.gosuncn.netty.core.model.DefaultHeader;
 import com.gosuncn.netty.core.model.DefaultRequestHeader;
-import com.gosuncn.netty.core.model.GoContext;
-import com.gosuncn.netty.core.model.GoRequest;
-import com.gosuncn.netty.core.model.GoResponse;
-import com.gosuncn.netty.core.model.GoSession;
+import com.gosuncn.netty.core.model.GSContext;
+import com.gosuncn.netty.core.model.GSRequest;
+import com.gosuncn.netty.core.model.GSResponse;
+import com.gosuncn.netty.core.model.GSSession;
 import com.gosuncn.netty.core.model.MsgTypeInface;
 import com.gosuncn.netty.core.model.ResponseStatusCodeEnum;
 import com.gosuncn.netty.core.model.Serializer;
@@ -51,7 +53,7 @@ public class DefaultServerMsgDispatcher {
 		return dispatcher;
 	}
 	
-	public void dispathcher(GoRequest request,GoResponse response){
+	public void dispathcher(GSRequest request,GSResponse response){
 		
 		DefaultRequestHeader header = (DefaultRequestHeader) request.getHeader();
 		String url = header.getUrl().trim();
@@ -85,6 +87,7 @@ public class DefaultServerMsgDispatcher {
 					response.getChannel().writeAndFlush(dto);
 				}
 			} catch (Exception e) {
+				LoggerUtils.info("服务端处理异常-{}", e);
 				DefaultHeader responseHeader = DefaultHeader.responseHeaderBuilder()
 						.status(ResponseStatusCodeEnum.ERROR.getCode()).build();
 				DefaultDTO dto = DefaultDTO.buidler()
@@ -95,34 +98,47 @@ public class DefaultServerMsgDispatcher {
 		}
 	}
 	
-	private Object buildByClazz(String fieldName,Class<?> clazz,GoRequest request,GoResponse response){
+	private Object buildByClazz(String fieldName,Class<?> clazz,GSRequest request,GSResponse response){
 		
-		if(clazz == GoRequest.class){
+		if(clazz == GSRequest.class){
 			return request;
-		}else if(clazz == GoResponse.class){
+		}else if(clazz == GSResponse.class){
 			return response;
-		}else if(clazz == GoContext.class){
+		}else if(clazz == GSContext.class){
 			return IocContainer.getGoContext();
-		}else if(clazz == GoSession.class){
+		}else if(clazz == GSSession.class){
 			return request.getSession();
 		}else{
 			
 			DefaultRequestHeader header = (DefaultRequestHeader)request.getHeader();
 			try {
-				Object obj = clazz.newInstance();
+
 				if(header.getRequestType() == BodyTypeInface.JSON){
-					Field[] fields = clazz.getDeclaredFields();
-					for(Field field : fields){
-						fillValue4Field(field,obj,request.getParamsNode());
+					if(clazz.isAssignableFrom(Collection.class)){
+						// 单列集合
+						throw new RuntimeException("不支持的类型-" + clazz.getName());
+					}else if(clazz.isAssignableFrom(Map.class)){
+						// 双列集合
+						throw new RuntimeException("不支持的类型-" + clazz.getName());
+					}else{
+						// 普通对象
+						Object obj = clazz.newInstance();
+						Field[] fields = clazz.getDeclaredFields();
+						for(Field field : fields){
+							fillValue4Field(field,obj,request.getParamsNode());
+						}
+						return obj;
 					}
 				}else if(header.getRequestType() == BodyTypeInface.FORM){
 					return request.getParameter(fieldName);
 				}else if(header.getRequestType() == BodyTypeInface.SERIALIZER){
+					Object obj = clazz.newInstance();
 					if(obj instanceof Serializer){
 						((Serializer)obj).readFromBytes(request.getParamsSerializerBytes());
 					}
+					return obj;		
 				}
-				return obj;		
+				
 			} catch (Exception e) {
 				LoggerUtils.warn("创建参数异常-{}",e.getMessage(),e);
 			} 
@@ -132,8 +148,7 @@ public class DefaultServerMsgDispatcher {
 	
 	/**
 	 * TODO 暂时未支持List、Map等集合数组  
-	 * 暂时未支持List、Map等集合数组 
-	 * 暂时未支持List、Map等集合数组 
+	 * 考虑获取List<T> 、Map<T> 的泛型T，然后使用json转换
 	 * @param field
 	 * @param obj
 	 * @param request
@@ -237,15 +252,22 @@ public class DefaultServerMsgDispatcher {
 					value = "";
 				}
 			}else{
-				// 数组或者对象
-				value = clazz.newInstance();
-				Field[] fields = value.getClass().getDeclaredFields();
-				for(Field sonField : fields){
-					List<Node> nodeList = node.getNodeList();
-					if( nodeList != null){
-						for(Node item : node.getNodeList()){
-							if(fillValue4Field(sonField, value, item)){
-								break;
+				
+				if(clazz.isAssignableFrom(Collection.class)){
+					throw new RuntimeException("不支持的类型-" + clazz.getName());
+				}else if(clazz.isAssignableFrom(Map.class)){
+					throw new RuntimeException("不支持的类型-" + clazz.getName());
+				}else{
+					// 普通对象
+					value = clazz.newInstance();
+					Field[] fields = value.getClass().getDeclaredFields();
+					for(Field sonField : fields){
+						List<Node> nodeList = node.getNodeList();
+						if( nodeList != null){
+							for(Node item : node.getNodeList()){
+								if(fillValue4Field(sonField, value, item)){
+									break;
+								}
 							}
 						}
 					}
@@ -258,7 +280,7 @@ public class DefaultServerMsgDispatcher {
 			if( nodeList != null){
 				for(Node item : node.getNodeList()){
 					if(fillValue4Field(field, obj, item)){
-						break;
+						return true; 
 					}
 				}
 			}

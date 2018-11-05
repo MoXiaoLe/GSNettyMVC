@@ -19,6 +19,11 @@ import io.netty.handler.codec.ByteToMessageDecoder;
  * @author mojiale66@163.com
  * @date 2018年9月18日
  * @description 默认解码器
+ * ------------------------------------------------------------------------
+ * | 报文开始标志  | 报文类型     | 报文头长度      | 报文体长度   | 报文头                      |  报文体      |
+ * | startFlag | msgType | headerLen | bodyLen  | header        |  body   |
+ * | int       | byte    | short     | int      | DefaultHeader |  byte[] |
+ * -------------------------------------------------------------------------
  */
 public class DefaultDecoder extends ByteToMessageDecoder{
 

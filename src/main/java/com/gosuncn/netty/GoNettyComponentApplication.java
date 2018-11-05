@@ -5,8 +5,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.gosuncn.netty.core.processor.GoNettyProcessor;
-import com.gosuncn.netty.core.processor.GoNettyProcessor.ServerBuilder;
+import com.gosuncn.netty.core.processor.GSNettyProcessor;
+import com.gosuncn.netty.core.processor.GSNettyProcessor.ServerBuilder;
 
 @SpringBootApplication
 public class GoNettyComponentApplication implements CommandLineRunner{
@@ -25,7 +25,7 @@ public class GoNettyComponentApplication implements CommandLineRunner{
 	
 	public void startServer() throws Exception{
 		
-		ServerBuilder builder =  GoNettyProcessor.serverBuilder();
+		ServerBuilder builder =  GSNettyProcessor.serverBuilder();
 		builder.build().start();
 		
 	}

@@ -5,8 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.gosuncn.netty.common.util.INetUtils;
 import com.gosuncn.netty.core.accepter.MsgListener;
-import com.gosuncn.netty.core.model.GoContext;
-import com.gosuncn.netty.core.model.GoSession;
+import com.gosuncn.netty.core.model.GSContext;
+import com.gosuncn.netty.core.model.GSSession;
 
 
 /**
@@ -18,9 +18,9 @@ import com.gosuncn.netty.core.model.GoSession;
 public class IocContainer {
 	
 	/**应用上下文对象*/
-	private static GoContext goContext;
+	private static GSContext goContext;
 	/**会话集合 */
-	private static Map<String,GoSession> sessionHolderMap = new ConcurrentHashMap<String,GoSession>(); 
+	private static Map<String,GSSession> sessionHolderMap = new ConcurrentHashMap<String,GSSession>(); 
 	/**执行器集合*/
 	private static Map<String,InvokerHolder> invokerHolderMap = new ConcurrentHashMap<String, InvokerHolder>();
 	/**消息回调监听器*/
@@ -29,17 +29,17 @@ public class IocContainer {
 	
 	/**初始化上下文对象*/
 	public static void initContext(int port){
-		goContext = GoContext.newInstance(INetUtils.getLocalIP(),port);
+		goContext = GSContext.newInstance(INetUtils.getLocalIP(),port);
 	}
 	
-	public static void putSession(GoSession session){
+	public static void putSession(GSSession session){
 		
 		if(session != null){
 			sessionHolderMap.put(session.getChannelId(), session);
 		}
 	}
 	
-	public static GoSession getSession(String channelId){
+	public static GSSession getSession(String channelId){
 		
 		return sessionHolderMap.get(channelId);
 	}
@@ -65,7 +65,7 @@ public class IocContainer {
 		
 	}
 
-	public static GoContext getGoContext() {
+	public static GSContext getGoContext() {
 		return goContext;
 	}
 	

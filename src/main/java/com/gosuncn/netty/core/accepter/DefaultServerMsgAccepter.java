@@ -15,10 +15,10 @@ import com.gosuncn.netty.core.model.BodyTypeInface;
 import com.gosuncn.netty.core.model.DefaultDTO;
 import com.gosuncn.netty.core.model.DefaultHeader;
 import com.gosuncn.netty.core.model.DefaultRequestHeader;
-import com.gosuncn.netty.core.model.GoRequest;
-import com.gosuncn.netty.core.model.GoResponse;
-import com.gosuncn.netty.core.model.GoSession;
-import com.gosuncn.netty.core.model.GoSessionImpl;
+import com.gosuncn.netty.core.model.GSRequest;
+import com.gosuncn.netty.core.model.GSResponse;
+import com.gosuncn.netty.core.model.GSSession;
+import com.gosuncn.netty.core.model.GSSessionImpl;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -47,8 +47,8 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 			throw new Exception("channelRead0 未知错误");
 		}
 		
-		GoRequest request = GoRequest.newInstance(channel, header, body);
-		GoResponse response = GoResponse.newInstance(channel, null, null);
+		GSRequest request = GSRequest.newInstance(channel, header, body);
+		GSResponse response = GSResponse.newInstance(channel, null, null);
 		service(request, response);
 		
 		if(msgListener != null){
@@ -67,7 +67,7 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 		// 创建并缓存session
 		Channel channel = ctx.channel();
 		if(channel != null){
-			GoSession session = new GoSessionImpl(channel);
+			GSSession session = new GSSessionImpl(channel);
 			IocContainer.putSession(session);
 		}else{
 			throw new Exception("创建session异常");
@@ -114,7 +114,7 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 		
 	}
 	
-	protected void service(GoRequest goRequest,GoResponse goResponse) {
+	protected void service(GSRequest goRequest,GSResponse goResponse) {
 		
 		// 对 body 进行解码
 		byte[] body = goRequest.getBody();
@@ -124,6 +124,7 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 			if(bodyType == BodyTypeInface.JSON){
 				Node node = getNodeFromBody(body);
 				goRequest.setParamsNode(node);
+				goRequest.setJsonStrBytes(body);
 			}else if(bodyType == BodyTypeInface.FORM){
 				Map<String,String[]> paramsMap = getParamsMapFromBody(body);
 				goRequest.setParamsMap(paramsMap);
@@ -132,7 +133,6 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 			}else{
 				throw new RuntimeException("不支持的body类型");
 			}
-			
 		}
 		
 		// 把消息传递到 dispathcher 中

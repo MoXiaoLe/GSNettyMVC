@@ -1,7 +1,10 @@
 package com.gosuncn.netty.core.codec;
 
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
@@ -52,6 +55,23 @@ public class CodecTest {
 	
 	@Test
 	public void test() throws Exception{
+		
+		Class c = Collection.class;
+		System.out.println(c.isAssignableFrom(List.class));
+		
+		List<String> aa = new ArrayList<String>();
+		
+		ParameterizedType type = (ParameterizedType)aa.getClass().getGenericSuperclass();
+		Class<?> genericClazz = null; 
+		if(type != null){
+			Type[] types = type.getActualTypeArguments();
+			if(types != null && types.length > 0){
+				genericClazz = types[0].getClass();
+				System.out.println(genericClazz.getSimpleName());
+			}
+		}
+		
+		
 		
 		ByteBuf buff = BufferFactory.buildBuff();
 		encoder.encode(null, defaultDTO, buff);

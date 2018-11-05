@@ -1,6 +1,5 @@
 package com.gosuncn.netty;
 
-
 import java.util.Scanner;
 
 import org.junit.Before;
@@ -14,7 +13,7 @@ import com.gosuncn.netty.core.model.DefaultDTO;
 import com.gosuncn.netty.core.model.DefaultHeader;
 import com.gosuncn.netty.core.model.MsgTypeInface;
 import com.gosuncn.netty.core.processor.ClientNettyProcessor;
-import com.gosuncn.netty.core.processor.GoNettyProcessor;
+import com.gosuncn.netty.core.processor.GSNettyProcessor;
 
 
 @RunWith(SpringRunner.class)
@@ -27,7 +26,7 @@ public class ClientTest {
 	@Before
 	public void init() throws Exception{
 		
-		processor = GoNettyProcessor.clientBuilder()
+		processor = GSNettyProcessor.clientBuilder()
 						.host("127.0.0.1")
 						.port(8080)
 						.build();

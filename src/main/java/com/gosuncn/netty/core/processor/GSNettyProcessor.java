@@ -10,7 +10,7 @@ import com.gosuncn.netty.core.codec.DefaultEncoder;
 
 import io.netty.channel.ChannelHandler;
 
-public abstract class GoNettyProcessor {
+public abstract class GSNettyProcessor {
 
 	public abstract void start() throws Exception;
 	

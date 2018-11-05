@@ -13,12 +13,12 @@ import io.netty.channel.Channel;
  * @date 2018年9月27日
  * @description 请求域对象
  */
-public class GoRequest {
+public class GSRequest {
 	
 	/**会话对象*/
-	private GoSession session;
+	private GSSession session;
 	/**应用上下文*/
-	private GoContext goContext;
+	private GSContext goContext;
 	/**通道*/
 	private Channel channel;
 	/**报文头*/
@@ -32,14 +32,15 @@ public class GoRequest {
 	private Map<String, String[]> paramsMap;
 	/**请求参数Node(BodyTypeEnum.JSON)*/
 	private Node paramsNode;
+	private byte[] jsonStrBytes;
 	
-	private GoRequest(){
+	private GSRequest(){
 		this.goContext = IocContainer.getGoContext();
 	}
 	
-	public static GoRequest newInstance(Channel channel,DefaultHeader header,byte[] body){
+	public static GSRequest newInstance(Channel channel,DefaultHeader header,byte[] body){
 		
-		GoRequest goRequest = new GoRequest();
+		GSRequest goRequest = new GSRequest();
 		goRequest.setChannel(channel);
 		goRequest.setBody(body);
 		goRequest.setHeader(header);
@@ -48,16 +49,16 @@ public class GoRequest {
 		return goRequest;
 	}
 	
-	public GoSession getSession() {
+	public GSSession getSession() {
 		return session;
 	}
-	public void setSession(GoSession session) {
+	public void setSession(GSSession session) {
 		this.session = session;
 	}
-	public GoContext getGoContext() {
+	public GSContext getGoContext() {
 		return goContext;
 	}
-	public void setGoContext(GoContext goContext) {
+	public void setGoContext(GSContext goContext) {
 		this.goContext = goContext;
 	}
 	public Channel getChannel() {
@@ -114,6 +115,14 @@ public class GoRequest {
 			return strs[0];
 		}
 		return null;
+	}
+
+	public byte[] getJsonStrBytes() {
+		return jsonStrBytes;
+	}
+
+	public void setJsonStrBytes(byte[] jsonStrBytes) {
+		this.jsonStrBytes = jsonStrBytes;
 	}
 	
 

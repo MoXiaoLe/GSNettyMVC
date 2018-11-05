@@ -6,9 +6,9 @@ import java.util.Set;
 
 import io.netty.channel.Channel;
 
-public class GoSessionImpl extends GoSession{
+public class GSSessionImpl extends GSSession{
 
-	public GoSessionImpl(Channel channel) {
+	public GSSessionImpl(Channel channel) {
 		super(channel);
 	}
 
