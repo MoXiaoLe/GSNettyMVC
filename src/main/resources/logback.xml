@@ -35,7 +35,7 @@
 		</encoder>
 	</appender> -->
 
-	<logger name="com.gosuncn.netty" level="TRACE"/>
+	<logger name="com.jiale.netty" level="TRACE"/>
 	<!-- 全局配置 -->
 	<root level="INFO">
 		<appender-ref ref="STDOUT"/>
