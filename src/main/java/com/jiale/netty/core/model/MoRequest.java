@@ -13,12 +13,12 @@ import io.netty.channel.Channel;
  * @date 2018年9月27日
  * @description 请求域对象
  */
-public class GSRequest {
+public class MoRequest {
 	
 	/**会话对象*/
-	private GSSession session;
+	private MoSession session;
 	/**应用上下文*/
-	private GSContext goContext;
+	private MoContext goContext;
 	/**通道*/
 	private Channel channel;
 	/**报文头*/
@@ -34,13 +34,13 @@ public class GSRequest {
 	private JsonUtils.Node paramsNode;
 	private byte[] jsonStrBytes;
 	
-	private GSRequest(){
+	private MoRequest(){
 		this.goContext = IocContainer.getGoContext();
 	}
 	
-	public static GSRequest newInstance(Channel channel,DefaultHeader header,byte[] body){
+	public static MoRequest newInstance(Channel channel, DefaultHeader header, byte[] body){
 		
-		GSRequest goRequest = new GSRequest();
+		MoRequest goRequest = new MoRequest();
 		goRequest.setChannel(channel);
 		goRequest.setBody(body);
 		goRequest.setHeader(header);
@@ -49,16 +49,16 @@ public class GSRequest {
 		return goRequest;
 	}
 	
-	public GSSession getSession() {
+	public MoSession getSession() {
 		return session;
 	}
-	public void setSession(GSSession session) {
+	public void setSession(MoSession session) {
 		this.session = session;
 	}
-	public GSContext getGoContext() {
+	public MoContext getGoContext() {
 		return goContext;
 	}
-	public void setGoContext(GSContext goContext) {
+	public void setGoContext(MoContext goContext) {
 		this.goContext = goContext;
 	}
 	public Channel getChannel() {

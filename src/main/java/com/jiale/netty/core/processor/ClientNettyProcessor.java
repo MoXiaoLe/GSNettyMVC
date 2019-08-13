@@ -23,7 +23,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  * @date 2018年9月27日
  * @description 客户端处理入口
  */
-public class ClientNettyProcessor extends GSNettyProcessor{
+public class ClientNettyProcessor extends MoNettyProcessor {
 
 	/**服务机IP*/
     private String host;

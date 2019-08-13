@@ -3,7 +3,7 @@ package com.jiale.netty;
 import java.util.Scanner;
 
 import com.jiale.netty.core.processor.ClientNettyProcessor;
-import com.jiale.netty.core.processor.GSNettyProcessor;
+import com.jiale.netty.core.processor.MoNettyProcessor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +26,7 @@ public class ClientTest {
 	@Before
 	public void init() throws Exception{
 		
-		processor = GSNettyProcessor.clientBuilder()
+		processor = MoNettyProcessor.clientBuilder()
 						.host("127.0.0.1")
 						.port(8089)
 						.build();

@@ -14,10 +14,10 @@ import com.jiale.netty.core.model.BodyTypeInface;
 import com.jiale.netty.core.model.DefaultDTO;
 import com.jiale.netty.core.model.DefaultHeader;
 import com.jiale.netty.core.model.DefaultRequestHeader;
-import com.jiale.netty.core.model.GSRequest;
-import com.jiale.netty.core.model.GSResponse;
-import com.jiale.netty.core.model.GSSession;
-import com.jiale.netty.core.model.GSSessionImpl;
+import com.jiale.netty.core.model.MoRequest;
+import com.jiale.netty.core.model.MoResponse;
+import com.jiale.netty.core.model.MoSession;
+import com.jiale.netty.core.model.MoSessionImpl;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,8 +46,8 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 			throw new Exception("channelRead0 未知错误");
 		}
 		
-		GSRequest request = GSRequest.newInstance(channel, header, body);
-		GSResponse response = GSResponse.newInstance(channel, null, null);
+		MoRequest request = MoRequest.newInstance(channel, header, body);
+		MoResponse response = MoResponse.newInstance(channel, null, null);
 		service(request, response);
 		
 		if(msgListener != null){
@@ -66,7 +66,7 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 		// 创建并缓存session
 		Channel channel = ctx.channel();
 		if(channel != null){
-			GSSession session = new GSSessionImpl(channel);
+			MoSession session = new MoSessionImpl(channel);
 			IocContainer.putSession(session);
 		}else{
 			throw new Exception("创建session异常");
@@ -113,7 +113,7 @@ public class DefaultServerMsgAccepter extends SimpleChannelInboundHandler<Defaul
 		
 	}
 	
-	protected void service(GSRequest goRequest,GSResponse goResponse) {
+	protected void service(MoRequest goRequest, MoResponse goResponse) {
 		
 		// 对 body 进行解码
 		byte[] body = goRequest.getBody();

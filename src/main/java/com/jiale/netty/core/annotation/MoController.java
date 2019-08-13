@@ -6,20 +6,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springframework.stereotype.Component;
+
 /**
  * 
  * @author mojiale66@163.com
- * @date 2018年9月28日
- * @description 请求路径
+ * @date 2018年9月27日
+ * @description 类似于 spring mvc 的controller 注解
+ * 
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface GoRequestMapping {
+@Component
+public @interface MoController {
+
+	String value() default "";
 	
-	/**
-	 * 请求路径
-	 * @return 
-	 */
-	String path() default "";
 }

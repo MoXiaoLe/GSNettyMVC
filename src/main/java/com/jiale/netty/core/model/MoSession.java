@@ -11,7 +11,7 @@ import io.netty.util.AttributeKey;
  * @date 2018年9月27日
  * @description 服务端会话域对象抽象类
  */
-public abstract class GSSession {
+public abstract class MoSession {
 	
 	/**通道*/
 	private Channel channel;
@@ -26,7 +26,7 @@ public abstract class GSSession {
 	/**创建时间*/
 	private long  createTime;
 
-	public GSSession(Channel channel) {
+	public MoSession(Channel channel) {
 		super();
 		this.channel = channel;
 		this.channelId = channel.id().asLongText();

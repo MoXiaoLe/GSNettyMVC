@@ -6,9 +6,9 @@ import java.util.Set;
 
 import io.netty.channel.Channel;
 
-public class GSSessionImpl extends GSSession{
+public class MoSessionImpl extends MoSession {
 
-	public GSSessionImpl(Channel channel) {
+	public MoSessionImpl(Channel channel) {
 		super(channel);
 	}
 

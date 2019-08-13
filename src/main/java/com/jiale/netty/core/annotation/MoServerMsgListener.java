@@ -11,16 +11,13 @@ import org.springframework.stereotype.Component;
 /**
  * 
  * @author mojiale66@163.com
- * @date 2018年9月27日
- * @description 类似于 spring mvc 的controller 注解
- * 
+ * @date 2018年10月9日
+ * @description 服务端接收消息回调
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface GoController {
+public @interface MoServerMsgListener {
 
-	String value() default "";
-	
 }

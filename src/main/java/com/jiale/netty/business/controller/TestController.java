@@ -6,16 +6,16 @@ import com.jiale.netty.business.model.DeviceModel;
 import com.jiale.netty.business.model.ResponseModel;
 import com.jiale.netty.common.util.JsonUtils;
 import com.jiale.netty.common.util.LoggerUtils;
-import com.jiale.netty.core.annotation.GoController;
-import com.jiale.netty.core.annotation.GoRequestMapping;
-import com.jiale.netty.core.model.GSSession;
+import com.jiale.netty.core.annotation.MoController;
+import com.jiale.netty.core.annotation.MoRequestMapping;
+import com.jiale.netty.core.model.MoSession;
 
-@GoController
-@GoRequestMapping(path = "/test/")
+@MoController
+@MoRequestMapping(path = "/test/")
 public class TestController {
 	
-	@GoRequestMapping(path = "login")
-	public ResponseModel testLogin(String username, String password, GSSession session){
+	@MoRequestMapping(path = "login")
+	public ResponseModel testLogin(String username, String password, MoSession session){
 
 		LoggerUtils.info("用户登录-{}-{}",username,password);
 		// ignore login logic ...
@@ -28,8 +28,8 @@ public class TestController {
 	}
 	
 	
-	@GoRequestMapping(path = "deviceInfo")
-	public ResponseModel testGetDeviceInfo(GSSession session, DeviceModel paramsModel){
+	@MoRequestMapping(path = "deviceInfo")
+	public ResponseModel testGetDeviceInfo(MoSession session, DeviceModel paramsModel){
 
 		LoggerUtils.info("接受到请求参数：-{}",JsonUtils.toJsonString(paramsModel));
 		

@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
  * 
  * @author mojiale66@163.com
  * @date 2018年10月9日
- * @description 服务端接收消息回调
+ * @description 客户端接收消息回调
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface GoServerMsgListener {
+public @interface MoClientMsgListener {
 
 }

@@ -3,10 +3,10 @@ package com.jiale.netty.core.common;
 import java.lang.reflect.Method;
 
 import com.jiale.netty.common.util.LoggerUtils;
-import com.jiale.netty.core.annotation.GoClientMsgListener;
-import com.jiale.netty.core.annotation.GoController;
-import com.jiale.netty.core.annotation.GoRequestMapping;
-import com.jiale.netty.core.annotation.GoServerMsgListener;
+import com.jiale.netty.core.annotation.MoClientMsgListener;
+import com.jiale.netty.core.annotation.MoController;
+import com.jiale.netty.core.annotation.MoRequestMapping;
+import com.jiale.netty.core.annotation.MoServerMsgListener;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class Spring4Scanner implements BeanPostProcessor{
 		// 扫描GoController 注解
 		scannerGoController(bean);
 		
-		// 扫描 GoClientMsgListener 、 GoServerMsgListener 注解
+		// 扫描 MoClientMsgListener 、 MoServerMsgListener 注解
 		scannerMsgListener(bean);
 		
 		return BeanPostProcessor.super.postProcessAfterInitialization(bean, beanName);
@@ -44,8 +44,8 @@ public class Spring4Scanner implements BeanPostProcessor{
 		
 		if(bean instanceof MsgListener){
 			
-			GoClientMsgListener clientMsgListener = bean.getClass().getAnnotation(GoClientMsgListener.class);
-			GoServerMsgListener serverMsgListener = bean.getClass().getAnnotation(GoServerMsgListener.class);
+			MoClientMsgListener clientMsgListener = bean.getClass().getAnnotation(MoClientMsgListener.class);
+			MoServerMsgListener serverMsgListener = bean.getClass().getAnnotation(MoServerMsgListener.class);
 			if(clientMsgListener != null){
 				IocContainer.putMsgListener("clientMsgListener", (MsgListener) bean);
 			}
@@ -58,9 +58,9 @@ public class Spring4Scanner implements BeanPostProcessor{
 	
 	private void scannerGoController(Object bean){
 		
-		GoController controller = bean.getClass().getAnnotation(GoController.class);
-		GoRequestMapping requestMapping = bean.getClass()
-				.getAnnotation(GoRequestMapping.class);
+		MoController controller = bean.getClass().getAnnotation(MoController.class);
+		MoRequestMapping requestMapping = bean.getClass()
+				.getAnnotation(MoRequestMapping.class);
 		if(controller != null && requestMapping != null){
 			String basePath = requestMapping.path();
 			
@@ -68,8 +68,8 @@ public class Spring4Scanner implements BeanPostProcessor{
 			if(methods != null){
 				for(Method method : methods){
 					
-					GoRequestMapping reqMapping = method
-							.getAnnotation(GoRequestMapping.class);
+					MoRequestMapping reqMapping = method
+							.getAnnotation(MoRequestMapping.class);
 					if(reqMapping == null){
 						continue;
 					}

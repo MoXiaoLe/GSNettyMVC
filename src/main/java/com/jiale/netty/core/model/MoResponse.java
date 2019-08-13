@@ -11,12 +11,12 @@ import io.netty.channel.Channel;
  * @date 2018年9月27日
  * @description 响应域对象
  */
-public class GSResponse {
+public class MoResponse {
 	
 	/**会话对象*/
-	private GSSession session;
+	private MoSession session;
 	/**应用上下文*/
-	private GSContext goContext;
+	private MoContext goContext;
 	/**通道*/
 	private Channel channel;
 	/**报文头*/
@@ -24,29 +24,29 @@ public class GSResponse {
 	/**报文体*/
 	private byte[] body;
 	
-	private GSResponse(){
+	private MoResponse(){
 		this.goContext = IocContainer.getGoContext();
 	}
 	
-	public static GSResponse newInstance(Channel channel,DefaultHeader header,byte[] body){
+	public static MoResponse newInstance(Channel channel, DefaultHeader header, byte[] body){
 		
-		GSResponse goResponse = new GSResponse();
+		MoResponse goResponse = new MoResponse();
 		goResponse.setChannel(channel);
 		goResponse.setSession(IocContainer.getSession(channel.id().asLongText()));
 		goResponse.setBody(body);
 		return goResponse;
 	}
 	
-	public GSSession getSession() {
+	public MoSession getSession() {
 		return session;
 	}
-	public void setSession(GSSession session) {
+	public void setSession(MoSession session) {
 		this.session = session;
 	}
-	public GSContext getGoContext() {
+	public MoContext getGoContext() {
 		return goContext;
 	}
-	public void setGoContext(GSContext goContext) {
+	public void setGoContext(MoContext goContext) {
 		this.goContext = goContext;
 	}
 	public Channel getChannel() {

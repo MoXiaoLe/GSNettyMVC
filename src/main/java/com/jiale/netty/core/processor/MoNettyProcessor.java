@@ -10,7 +10,7 @@ import com.jiale.netty.core.codec.DefaultEncoder;
 
 import io.netty.channel.ChannelHandler;
 
-public abstract class GSNettyProcessor {
+public abstract class MoNettyProcessor {
 
 	public abstract void start() throws Exception;
 	

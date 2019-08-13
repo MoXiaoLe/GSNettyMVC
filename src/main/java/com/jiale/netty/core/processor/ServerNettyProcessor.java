@@ -22,7 +22,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * @date 2018年9月27日
  * @description 服务端处理入口
  */
-public class ServerNettyProcessor extends GSNettyProcessor{
+public class ServerNettyProcessor extends MoNettyProcessor {
 
 	/**监听端口*/
     private int port;

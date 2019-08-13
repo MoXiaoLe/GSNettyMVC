@@ -3,12 +3,12 @@ package com.jiale.netty.business.controller;
 import com.jiale.netty.common.util.JsonUtils;
 import com.jiale.netty.common.util.LoggerUtils;
 import com.jiale.netty.core.accepter.MsgListener;
-import com.jiale.netty.core.annotation.GoClientMsgListener;
+import com.jiale.netty.core.annotation.MoClientMsgListener;
 import com.jiale.netty.core.model.DefaultDTO;
 
 import io.netty.channel.ChannelHandlerContext;
 
-@GoClientMsgListener
+@MoClientMsgListener
 public class ClientMsgListener implements MsgListener{
 
 	@Override

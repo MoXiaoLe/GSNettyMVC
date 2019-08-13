@@ -18,10 +18,10 @@ import com.jiale.netty.core.model.BodyTypeInface;
 import com.jiale.netty.core.model.DefaultDTO;
 import com.jiale.netty.core.model.DefaultHeader;
 import com.jiale.netty.core.model.DefaultRequestHeader;
-import com.jiale.netty.core.model.GSContext;
-import com.jiale.netty.core.model.GSRequest;
-import com.jiale.netty.core.model.GSResponse;
-import com.jiale.netty.core.model.GSSession;
+import com.jiale.netty.core.model.MoContext;
+import com.jiale.netty.core.model.MoRequest;
+import com.jiale.netty.core.model.MoResponse;
+import com.jiale.netty.core.model.MoSession;
 import com.jiale.netty.core.model.MsgTypeInface;
 import com.jiale.netty.core.model.ResponseStatusCodeEnum;
 import com.jiale.netty.core.model.Serializer;
@@ -53,7 +53,7 @@ public class DefaultServerMsgDispatcher {
 		return dispatcher;
 	}
 	
-	public void dispathcher(GSRequest request,GSResponse response){
+	public void dispathcher(MoRequest request, MoResponse response){
 		
 		DefaultRequestHeader header = (DefaultRequestHeader) request.getHeader();
 		String url = header.getUrl().trim();
@@ -98,15 +98,15 @@ public class DefaultServerMsgDispatcher {
 		}
 	}
 	
-	private Object buildByClazz(String fieldName,Class<?> clazz,GSRequest request,GSResponse response){
+	private Object buildByClazz(String fieldName, Class<?> clazz, MoRequest request, MoResponse response){
 		
-		if(clazz == GSRequest.class){
+		if(clazz == MoRequest.class){
 			return request;
-		}else if(clazz == GSResponse.class){
+		}else if(clazz == MoResponse.class){
 			return response;
-		}else if(clazz == GSContext.class){
+		}else if(clazz == MoContext.class){
 			return IocContainer.getGoContext();
-		}else if(clazz == GSSession.class){
+		}else if(clazz == MoSession.class){
 			return request.getSession();
 		}else{
 			
