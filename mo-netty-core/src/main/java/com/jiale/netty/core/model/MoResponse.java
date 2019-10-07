@@ -1,0 +1,72 @@
+package com.jiale.netty.core.model;
+
+
+import com.jiale.netty.core.common.IocContainer;
+import io.netty.channel.Channel;
+
+/**
+ * 
+ * @author mojiale66@163.com
+ * @date 2018年9月27日
+ * @description 响应域对象
+ */
+public class MoResponse {
+	
+	/**会话对象*/
+	private MoSession session;
+	/**应用上下文*/
+	private MoContext goContext;
+	/**通道*/
+	private Channel channel;
+	/**报文头*/
+	private DefaultHeader header;
+	/**报文体*/
+	private byte[] body;
+	
+	private MoResponse(){
+		this.goContext = IocContainer.getGoContext();
+	}
+	
+	public static MoResponse newInstance(Channel channel, DefaultHeader header, byte[] body){
+		
+		MoResponse goResponse = new MoResponse();
+		goResponse.setChannel(channel);
+		goResponse.setSession(IocContainer.getSession(channel.id().asLongText()));
+		goResponse.setBody(body);
+		return goResponse;
+	}
+	
+	public MoSession getSession() {
+		return session;
+	}
+	public void setSession(MoSession session) {
+		this.session = session;
+	}
+	public MoContext getGoContext() {
+		return goContext;
+	}
+	public void setGoContext(MoContext goContext) {
+		this.goContext = goContext;
+	}
+	public Channel getChannel() {
+		return channel;
+	}
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
+	public DefaultHeader getHeader() {
+		return header;
+	}
+	public void setHeader(DefaultHeader header) {
+		this.header = header;
+	}
+	public byte[] getBody() {
+		return body;
+	}
+	public void setBody(byte[] body) {
+		this.body = body;
+	}
+	
+	
+
+}

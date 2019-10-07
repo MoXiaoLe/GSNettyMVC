@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!-- 加载属性配置文件 -->
+	<property resource="application.properties"/>
+
+	<!-- 属性变量配置 -->
+	<substitutionProperty name="log.base" value="${log.base.dir}" />
+	<substitutionProperty name="log.charset" value="UTF-8" />
+
+	<!-- 控制台配置 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} [%method] - %msg%n</Pattern>
+		</layout>
+	</appender>
+
+	<!-- 日志文件配置 -->
+	<!-- <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+		<File>${log.base}/log.txt</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.base}/log_%d{yyyy-MM-dd}.txt.%i.zip</FileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">  
+                <maxFileSize>20MB</maxFileSize>  
+            </timeBasedFileNamingAndTriggeringPolicy>  
+            <maxHistory>7</maxHistory>  
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <ImmediateFlush>true</ImmediateFlush>
+            <charset>${log.charset}</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5levLOGGERgger{36} [%method] - %msg%n</pattern>
+		</encoder>
+	</appender> -->
+
+	<logger name="com.jiale.netty" level="TRACE"/>
+	<!-- 全局配置 -->
+	<root level="INFO">
+		<appender-ref ref="STDOUT"/>
+		<!-- <appender-ref ref="FILE"/> -->
+	</root>
+	
+</configuration>

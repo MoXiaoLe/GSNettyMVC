@@ -5,8 +5,14 @@
 
 	<groupId>com.jiale</groupId>
 	<artifactId>mo-netty</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<version>${project.version}</version>
+	<modules>
+		<module>mo-netty-core</module>
+		<module>mo-netty-server</module>
+		<module>mo-netty-client</module>
+		<module>mo-netty-admin</module>
+	</modules>
+	<packaging>pom</packaging>
 
 	<name>MoNetty</name>
 	<description>Chat Component Based Netty</description>
@@ -19,6 +25,7 @@
 	</parent>
 
 	<properties>
+		<project.version>0.0.1-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<fastjson.version>1.2.49</fastjson.version>
@@ -39,7 +46,7 @@
 		
 		
 		<!-- 日志处理 -->
-		<dependency>
+		<!--<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
@@ -53,12 +60,8 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-		
-		 <!-- netty -->
-		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-all</artifactId>
-		</dependency>
+		-->
+
 		
 		<!-- fastjson -->
 		<dependency>
