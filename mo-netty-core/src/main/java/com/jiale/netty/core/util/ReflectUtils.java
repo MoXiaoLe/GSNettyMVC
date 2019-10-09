@@ -1,9 +1,9 @@
 package com.jiale.netty.core.util;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import com.jiale.netty.core.common.IocContainer;
+import com.jiale.netty.core.model.*;
+
+import java.lang.reflect.*;
 
 /**
  * 
@@ -54,8 +54,13 @@ public class ReflectUtils {
 		return (Class) actualReturnType;
 	}
 
-	// 获得方法返回值类型的实际参数类型
-	// 比如public Map<K,V> show() ， 此方法要获得K和V的实际类型
+	/**
+	 * 获得方法返回值类型的实际参数类型
+	 * 比如public Map<K,V> show() ， 此方法要获得K和V的实际类型
+	 * @param childClass
+	 * @param method
+	 * @return
+	 */
 	@SuppressWarnings("all")
 	public static Class[] getActualParametricTypeOfReturnType(Class childClass, Method method) {
 
@@ -101,6 +106,78 @@ public class ReflectUtils {
 		}
 
 		return actualMethodParametricTypes;
+	}
+
+	/**
+	 * 根据 clazz 创建对应的 object，并且从请求参数中获取填充属性值
+	 * @param fieldName
+	 * @param clazz
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public static Object buildObjectByClazz(String fieldName, Class<?> clazz, MoRequest request, MoResponse response) throws IllegalAccessException, InstantiationException {
+
+		// 如果clazz是几大域对象则直接返回
+		if(clazz == MoRequest.class){
+			return request;
+		}else if(clazz == MoResponse.class){
+			return response;
+		}else if(clazz == MoContext.class){
+			return IocContainer.getContext();
+		}else if(clazz == MoSession.class){
+			return request.getSession();
+		}else {
+			// 不是几大域对象
+			if (request.getMsgType() == SystemConst.FORM) {
+				String param = request.getParameter(fieldName);
+				return stringToBasicType(clazz, param);
+			}
+			if (request.getMsgType() == SystemConst.SERIALIZER) {
+				Object obj = clazz.newInstance();
+				if (obj instanceof Serializer) {
+					((Serializer) obj).readFromBytes(request.getBody());
+				}
+				return obj;
+			}
+		}
+		return null;
+	}
+
+
+	/**
+	 * string 转几大基本类型
+	 * @param clazz
+	 * @param value
+	 * @return
+	 */
+	private static Object stringToBasicType(Class<?> clazz,String value){
+
+		if(clazz == String.class){
+			return value;
+		}
+		if(clazz == short.class || clazz == Short.class){
+			return Short.parseShort(value);
+		}
+		if(clazz == int.class || clazz == Integer.class){
+			return Integer.parseInt(value);
+		}
+		if(clazz == long.class || clazz == Long.class){
+			return Long.parseLong(value);
+		}
+		if(clazz == float.class || clazz == Float.class){
+			return Float.parseFloat(value);
+		}
+		if(clazz == double.class || clazz == Double.class){
+			return Double.parseDouble(value);
+		}
+		if(clazz == boolean.class || clazz == Boolean.class){
+			return Boolean.parseBoolean(value);
+		}
+		if(clazz == byte.class || clazz == Byte.class) {
+			return Byte.parseByte(value);
+		}
+		return null;
 	}
 
 }

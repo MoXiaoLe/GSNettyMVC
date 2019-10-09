@@ -1,6 +1,7 @@
 package com.jiale.netty.core.accepter;
 
 import com.jiale.netty.core.common.IocContainer;
+import com.jiale.netty.core.listener.MsgListener;
 import com.jiale.netty.core.model.ResponseDTO;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -9,11 +10,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * 
  * @author mojiale66@163.com
  * @date 2018年9月27日
- * @description 默认客户端消息接收器
+ * @description 响应消息接收器
  */
 public class ResponseAccepter extends SimpleChannelInboundHandler<ResponseDTO>{
 
-	private MsgListener msgListener = IocContainer.getMsgListener("clientMsgListener"); 
+	private MsgListener msgListener = IocContainer.getMsgListener("msgListener");
 	
 	
 	/**

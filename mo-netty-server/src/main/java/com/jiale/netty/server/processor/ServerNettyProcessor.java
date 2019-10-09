@@ -1,6 +1,10 @@
-package com.jiale.netty.core.processor;
+package com.jiale.netty.server.processor;
 
 
+import com.jiale.netty.core.accepter.RequestAccepter;
+import com.jiale.netty.core.codec.RequestDecoder;
+import com.jiale.netty.core.codec.ResponseEncoder;
+import com.jiale.netty.core.processor.MoNettyProcessor;
 import com.jiale.netty.core.util.LoggerUtils;
 import com.jiale.netty.core.common.IocContainer;
 import io.netty.bootstrap.ServerBootstrap;
@@ -12,6 +16,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,7 +49,7 @@ public class ServerNettyProcessor extends MoNettyProcessor {
 	}
 
 	@Override
-	public void start() throws Exception {
+	protected void launch() throws Exception {
 
 		LoggerUtils.info("开始启动服务器");
 		try {
@@ -71,6 +76,59 @@ public class ServerNettyProcessor extends MoNettyProcessor {
 		} catch (Exception e) {
 			LoggerUtils.warn("服务器启动失败-{}",e.getMessage());
 			throw e;
+		}
+
+	}
+
+
+	public static ServerBuilder serverBuilder(){
+		return new ServerBuilder();
+	}
+
+
+
+	public static class ServerBuilder{
+
+		private int port = 8080;;
+		private int bufSize = 2048;
+		private final List<Class<? extends ChannelHandler>> handlerClazzList
+				= new ArrayList<Class<? extends ChannelHandler>>();
+		private Class<? extends ChannelHandler> decoder;
+		private Class<? extends ChannelHandler> encoder;
+		private Class<? extends ChannelHandler> accepter;
+
+		public ServerNettyProcessor build(){
+
+			handlerClazzList.add(decoder == null ? RequestDecoder.class : decoder);
+			handlerClazzList.add(encoder == null ? ResponseEncoder.class : encoder);
+			handlerClazzList.add(accepter == null ? RequestAccepter.class : accepter);
+			ServerNettyProcessor processor = new ServerNettyProcessor(port,bufSize,handlerClazzList);
+			return processor;
+		}
+
+		public ServerBuilder port(int port){
+			this.port = port;
+			return this;
+		}
+
+		public ServerBuilder bufSize(int bufSize){
+			this.bufSize = bufSize;
+			return this;
+		}
+
+		public ServerBuilder decoder(Class<? extends ChannelHandler> decoder){
+			this.decoder = decoder;
+			return this;
+		}
+
+		public ServerBuilder encoder(Class<? extends ChannelHandler> encoder){
+			this.encoder = encoder;
+			return this;
+		}
+
+		public ServerBuilder accepter(Class<? extends ChannelHandler> accepter){
+			this.accepter = accepter;
+			return this;
 		}
 
 	}

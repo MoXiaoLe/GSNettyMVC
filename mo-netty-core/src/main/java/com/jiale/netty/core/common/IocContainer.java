@@ -1,7 +1,7 @@
 package com.jiale.netty.core.common;
 
 import com.jiale.netty.core.util.INetUtils;
-import com.jiale.netty.core.accepter.MsgListener;
+import com.jiale.netty.core.listener.MsgListener;
 import com.jiale.netty.core.model.MoContext;
 import com.jiale.netty.core.model.MoSession;
 
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class IocContainer {
 	
 	/**应用上下文对象*/
-	private static MoContext goContext;
+	private static MoContext context;
 	/**会话集合 */
 	private static Map<String, MoSession> sessionHolderMap = new ConcurrentHashMap<String, MoSession>();
 	/**执行器集合*/
@@ -29,7 +29,7 @@ public class IocContainer {
 	
 	/**初始化上下文对象*/
 	public static void initContext(int port){
-		goContext = MoContext.newInstance(INetUtils.getLocalIP(),port);
+		context = MoContext.newInstance(INetUtils.getLocalIP(),port);
 	}
 	
 	public static void putSession(MoSession session){
@@ -65,8 +65,8 @@ public class IocContainer {
 		
 	}
 
-	public static MoContext getGoContext() {
-		return goContext;
+	public static MoContext getContext() {
+		return context;
 	}
 	
 	public static void putMsgListener(String key,MsgListener msgListener){

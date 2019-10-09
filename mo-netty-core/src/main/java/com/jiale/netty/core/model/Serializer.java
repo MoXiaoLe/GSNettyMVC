@@ -21,8 +21,6 @@ import java.util.Map.Entry;
  */
 public abstract class Serializer {
 	
-	public static final Charset CHARSET = Charset.forName("UTF-8");
-	
 	/**反序列化缓冲区*/
 	protected ByteBuf readBuf;
 	
@@ -109,7 +107,7 @@ public abstract class Serializer {
 		
 		byte[] data = new byte[length];
 		data = readBytes(data);
-		return new String(data,CHARSET);
+		return new String(data,SystemConst.CHARSET);
 	}
 
 	public void writeString(String value){
@@ -119,7 +117,7 @@ public abstract class Serializer {
 			return;
 		}
 		
-		byte[] data = value.getBytes(CHARSET);
+		byte[] data = value.getBytes(SystemConst.CHARSET);
 		short length = (short) data.length;
 		writeShort(length);
 		writeBytes(data);

@@ -1,6 +1,8 @@
 package com.jiale.netty.server.model;
 
-public class DeviceModel {
+import com.jiale.netty.core.model.Serializer;
+
+public class DeviceModel extends Serializer {
 	
 	private String deviceId;
 	private String deviceName;
@@ -43,6 +45,25 @@ public class DeviceModel {
 	}
 	public void setDeviceProducer(String deviceProducer) {
 		this.deviceProducer = deviceProducer;
-	} 
-	
+	}
+
+	@Override
+	protected void read() {
+		this.deviceId = this.readString();
+		this.deviceName = this.readString();
+		this.deviceProducer = this.readString();
+		this.deviceType = this.readInt();
+		this.latitude = this.readDouble();
+		this.longitude = this.readDouble();
+	}
+
+	@Override
+	protected void write() {
+		this.writeString(this.deviceId);
+		this.writeString(this.deviceName);
+		this.writeString(this.deviceProducer);
+		this.writeInt(this.deviceType);
+		this.writeDouble(this.latitude);
+		this.writeDouble(this.longitude);
+	}
 }

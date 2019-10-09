@@ -1,8 +1,9 @@
 package com.jiale.netty.core.model;
 
-import com.jiale.netty.core.util.JsonUtils;
 import com.jiale.netty.core.common.IocContainer;
+import com.jiale.netty.core.util.ParseUtils;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Map;
 
@@ -14,89 +15,58 @@ import java.util.Map;
  */
 public class MoRequest {
 	
-	/**会话对象*/
+	/**
+	 * 会话对象
+	 */
 	private MoSession session;
-	/**应用上下文*/
-	private MoContext goContext;
-	/**通道*/
+	/**
+	 * 应用上下文
+	 */
+	private MoContext context;
+	/**
+	 * 通道
+	 */
 	private Channel channel;
-	/**报文头*/
-	private DefaultHeader header;
-	/**报文体*/
+	/**
+	 * 消息类型：1-键值对 2-SERIALIZER
+	 */
+	private byte msgType;
+	/**
+	 * 请求url
+	 */
+	private byte[] url;
+	/**
+	 * 报文体
+	 */
 	private byte[] body;
-	
-	/**请求参数对象(BodyTypeEnum.SERIALIZER)*/
-	private byte[] paramsSerializerBytes;
-	/**请求参数map(BodyTypeEnum.FORM)*/
+	/**
+	 * 参数map(SystemConst.FORM)
+	 */
 	private Map<String, String[]> paramsMap;
-	/**请求参数Node(BodyTypeEnum.JSON)*/
-	private JsonUtils.Node paramsNode;
-	private byte[] jsonStrBytes;
+
 	
 	private MoRequest(){
-		this.goContext = IocContainer.getGoContext();
+		this.context = IocContainer.getContext();
 	}
 	
-	public static MoRequest newInstance(Channel channel, DefaultHeader header, byte[] body){
-		
-		MoRequest goRequest = new MoRequest();
-		goRequest.setChannel(channel);
-		goRequest.setBody(body);
-		goRequest.setHeader(header);
-		goRequest.setSession(IocContainer.getSession(channel.id().asLongText()));
-		
-		return goRequest;
+	public static MoRequest newInstance(ChannelHandlerContext ctx, RequestDTO msg){
+
+		Channel channel = ctx.channel();
+		String channelId = channel.id().asLongText();
+		MoRequest moRequest = new MoRequest();
+		moRequest.setChannel(channel);
+		moRequest.setSession(IocContainer.getSession(channelId));
+		if(msg != null){
+			moRequest.setMsgType(msg.msgType);
+			moRequest.setBody(msg.body);
+			moRequest.setUrl(msg.url);
+			if(msg.msgType == SystemConst.FORM){
+				moRequest.setParamsMap(ParseUtils.parseFormMap(msg.body));
+			}
+		}
+		return moRequest;
 	}
-	
-	public MoSession getSession() {
-		return session;
-	}
-	public void setSession(MoSession session) {
-		this.session = session;
-	}
-	public MoContext getGoContext() {
-		return goContext;
-	}
-	public void setGoContext(MoContext goContext) {
-		this.goContext = goContext;
-	}
-	public Channel getChannel() {
-		return channel;
-	}
-	public void setChannel(Channel channel) {
-		this.channel = channel;
-	}
-	public Map<String, String[]> getParamsMap() {
-		return paramsMap;
-	}
-	public void setParamsMap(Map<String, String[]> paramsMap) {
-		this.paramsMap = paramsMap;
-	}
-	public DefaultHeader getHeader() {
-		return header;
-	}
-	public void setHeader(DefaultHeader header) {
-		this.header = header;
-	}
-	public byte[] getBody() {
-		return body;
-	}
-	public void setBody(byte[] body) {
-		this.body = body;
-	}
-	public byte[] getParamsSerializerBytes() {
-		return paramsSerializerBytes;
-	}
-	public void setParamsSerializerBytes(byte[] paramsSerializerBytes) {
-		this.paramsSerializerBytes = paramsSerializerBytes;
-	}
-	public JsonUtils.Node getParamsNode() {
-		return paramsNode;
-	}
-	public void setParamsNode(JsonUtils.Node paramsNode) {
-		this.paramsNode = paramsNode;
-	}
-	
+
 	public String[] getParameterNames(){
 		if(paramsMap != null){
 			String[] strs = new String[paramsMap.keySet().size()];
@@ -116,13 +86,59 @@ public class MoRequest {
 		return null;
 	}
 
-	public byte[] getJsonStrBytes() {
-		return jsonStrBytes;
+	public MoSession getSession() {
+		return session;
 	}
 
-	public void setJsonStrBytes(byte[] jsonStrBytes) {
-		this.jsonStrBytes = jsonStrBytes;
+	public void setSession(MoSession session) {
+		this.session = session;
 	}
-	
 
+	public MoContext getContext() {
+		return context;
+	}
+
+	public void setContext(MoContext context) {
+		this.context = context;
+	}
+
+	public Channel getChannel() {
+		return channel;
+	}
+
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
+
+	public byte[] getBody() {
+		return body;
+	}
+
+	public void setBody(byte[] body) {
+		this.body = body;
+	}
+
+	public Map<String, String[]> getParamsMap() {
+		return paramsMap;
+	}
+
+	public void setParamsMap(Map<String, String[]> paramsMap) {
+		this.paramsMap = paramsMap;
+	}
+
+	public byte getMsgType() {
+		return msgType;
+	}
+
+	public void setMsgType(byte msgType) {
+		this.msgType = msgType;
+	}
+
+	public byte[] getUrl() {
+		return url;
+	}
+
+	public void setUrl(byte[] url) {
+		this.url = url;
+	}
 }

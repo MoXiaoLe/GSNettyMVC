@@ -1,7 +1,10 @@
-package com.jiale.netty.core.processor;
+package com.jiale.netty.client.processor;
 
+import com.jiale.netty.core.accepter.ResponseAccepter;
+import com.jiale.netty.core.codec.RequestEncoder;
+import com.jiale.netty.core.codec.ResponseDecoder;
+import com.jiale.netty.core.processor.MoNettyProcessor;
 import com.jiale.netty.core.util.LoggerUtils;
-import com.jiale.netty.core.model.DefaultRequestHeader;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -9,6 +12,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +44,7 @@ public class ClientNettyProcessor extends MoNettyProcessor {
 	}
 
 	@Override
-	public void start() throws Exception {
+    protected void launch() throws Exception {
 		
 		LoggerUtils.info("启动客户端");
 		// 设置循环线程组
@@ -92,4 +96,54 @@ public class ClientNettyProcessor extends MoNettyProcessor {
         
         channel.writeAndFlush(message);
     }
+
+
+    public static ClientBuilder clientBuilder(){
+        return new ClientBuilder();
+    }
+
+    public static class ClientBuilder{
+
+        private int port;
+        private String host;
+        private final List<Class<? extends ChannelHandler>> handlerClazzList
+                = new ArrayList<Class<? extends ChannelHandler>>();;
+        private Class<? extends ChannelHandler> decoder;
+        private Class<? extends ChannelHandler> encoder;
+        private Class<? extends ChannelHandler> accepter;
+
+        public ClientNettyProcessor build(){
+            handlerClazzList.add(decoder == null ? ResponseDecoder.class : decoder);
+            handlerClazzList.add(encoder == null ? RequestEncoder.class : encoder);
+            handlerClazzList.add(accepter == null ? ResponseAccepter.class : accepter);
+            ClientNettyProcessor processor = new ClientNettyProcessor(host, port,handlerClazzList);
+            return processor;
+        }
+
+        public ClientBuilder port(int port){
+            this.port = port;
+            return this;
+        }
+
+        public ClientBuilder host(String host){
+            this.host = host;
+            return this;
+        }
+
+        public ClientBuilder decoder(Class<? extends ChannelHandler> decoder){
+            this.decoder = decoder;
+            return this;
+        }
+
+        public ClientBuilder encoder(Class<? extends ChannelHandler> encoder){
+            this.encoder = encoder;
+            return this;
+        }
+
+        public ClientBuilder accepter(Class<? extends ChannelHandler> accepter){
+            this.accepter = accepter;
+            return this;
+        }
+    }
+
 }

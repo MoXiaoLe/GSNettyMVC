@@ -3,6 +3,7 @@ package com.jiale.netty.core.model;
 
 import com.jiale.netty.core.common.IocContainer;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * 
@@ -12,61 +13,96 @@ import io.netty.channel.Channel;
  */
 public class MoResponse {
 	
-	/**会话对象*/
+	/**
+	 * 会话对象
+	 */
 	private MoSession session;
-	/**应用上下文*/
-	private MoContext goContext;
-	/**通道*/
+	/**
+	 * 应用上下文
+	 */
+	private MoContext context;
+	/**
+	 * 通道
+	 */
 	private Channel channel;
-	/**报文头*/
-	private DefaultHeader header;
-	/**报文体*/
+	/**
+	 * 报文类型
+	 */
+	private byte msgType;
+	/**
+	 * 状态码
+	 */
+	private short statusCode;
+	/**
+	 * 报文体
+	 */
 	private byte[] body;
 	
 	private MoResponse(){
-		this.goContext = IocContainer.getGoContext();
+		this.context = IocContainer.getContext();
 	}
 	
-	public static MoResponse newInstance(Channel channel, DefaultHeader header, byte[] body){
-		
-		MoResponse goResponse = new MoResponse();
-		goResponse.setChannel(channel);
-		goResponse.setSession(IocContainer.getSession(channel.id().asLongText()));
-		goResponse.setBody(body);
-		return goResponse;
+	public static MoResponse newInstance(ChannelHandlerContext ctx, ResponseDTO msg){
+
+		Channel channel = ctx.channel();
+		String channelId = channel.id().asLongText();
+		MoResponse moResponse = new MoResponse();
+		moResponse.setChannel(channel);
+		moResponse.setSession(IocContainer.getSession(channelId));
+		if(msg != null){
+			moResponse.setMsgType(msg.msgType);
+			moResponse.setStatusCode(msg.statusCode);
+			moResponse.setBody(msg.body);
+		}
+		return moResponse;
 	}
-	
+
+
 	public MoSession getSession() {
 		return session;
 	}
+
 	public void setSession(MoSession session) {
 		this.session = session;
 	}
-	public MoContext getGoContext() {
-		return goContext;
+
+	public MoContext getContext() {
+		return context;
 	}
-	public void setGoContext(MoContext goContext) {
-		this.goContext = goContext;
+
+	public void setContext(MoContext context) {
+		this.context = context;
 	}
+
 	public Channel getChannel() {
 		return channel;
 	}
+
 	public void setChannel(Channel channel) {
 		this.channel = channel;
 	}
-	public DefaultHeader getHeader() {
-		return header;
+
+	public byte getMsgType() {
+		return msgType;
 	}
-	public void setHeader(DefaultHeader header) {
-		this.header = header;
+
+	public void setMsgType(byte msgType) {
+		this.msgType = msgType;
 	}
+
+	public short getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(short statusCode) {
+		this.statusCode = statusCode;
+	}
+
 	public byte[] getBody() {
 		return body;
 	}
+
 	public void setBody(byte[] body) {
 		this.body = body;
 	}
-	
-	
-
 }

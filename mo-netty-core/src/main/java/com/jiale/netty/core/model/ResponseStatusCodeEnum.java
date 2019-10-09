@@ -8,14 +8,18 @@ package com.jiale.netty.core.model;
  */
 public enum ResponseStatusCodeEnum {
 
-	NOT_FOND((short)404,"can not find invoker"),
-	OK((short)200,"handle success"),
-	ERROR((short)500,"handle fail"),
-	BAD_REQUEST((short)400,"invalid reqeust");
+	NOT_FOND((short)404,"msg=can not find invoker"),
+	OK((short)200,"msg=handle success"),
+	ERROR((short)500,"msg=handle fail"),
+	BAD_REQUEST((short)400,"msg=invalid reqeust");
 	
-	/**状态码*/
+	/**
+	 * 状态码
+	 */
 	private short code;
-	/**结果描述*/
+	/**
+	 * 结果描述
+	 */
 	private String msg;
 	
 	private ResponseStatusCodeEnum(short code,String msg){
