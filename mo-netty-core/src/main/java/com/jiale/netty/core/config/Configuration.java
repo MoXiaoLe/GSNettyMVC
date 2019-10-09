@@ -7,6 +7,6 @@ package com.jiale.netty.core.config;
  */
 public class Configuration {
 
-    public String scanPakageName;
+    public String scanPackageName;
 
 }

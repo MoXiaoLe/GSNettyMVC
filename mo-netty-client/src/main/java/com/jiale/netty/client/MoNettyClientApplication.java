@@ -1,5 +1,6 @@
 package com.jiale.netty.client;
 
+import com.jiale.netty.client.model.DeviceModel;
 import com.jiale.netty.core.config.Configuration;
 import com.jiale.netty.core.model.CodecConst;
 import com.jiale.netty.core.model.RequestDTO;
@@ -25,13 +26,20 @@ public class MoNettyClientApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         Configuration configuration = new Configuration();
-        configuration.scanPakageName = "com.jiale.netty";
+        configuration.scanPackageName = "com.jiale.netty.client";
         ClientNettyProcessor processor = ClientNettyProcessor.clientBuilder()
                 .host("127.0.0.1")
                 .port(8089)
                 .build();
         processor.start(configuration);
 
+        test1(processor);
+        test2(processor);
+
+    }
+
+
+    private void test1(ClientNettyProcessor processor){
 
         RequestDTO requestDTO = new RequestDTO();
 
@@ -44,6 +52,25 @@ public class MoNettyClientApplication implements CommandLineRunner {
 
     }
 
+    private void test2(ClientNettyProcessor processor){
+
+        RequestDTO requestDTO = new RequestDTO();
+        requestDTO.startFlag = CodecConst.START_FLAG;
+        requestDTO.msgType = 2;
+        requestDTO.url = "/test/deviceInfo".getBytes();
+
+        DeviceModel deviceModel = new DeviceModel();
+        deviceModel.setDeviceId("123321");
+        deviceModel.setDeviceName("helloWorld");
+        deviceModel.setDeviceProducer("gosuncn");
+        deviceModel.setDeviceType(666);
+        deviceModel.setLatitude(12);
+        deviceModel.setLongitude(23.4);
+        requestDTO.body = deviceModel.getBytes();
+
+        processor.send(requestDTO);
+
+    }
 
 
 }
