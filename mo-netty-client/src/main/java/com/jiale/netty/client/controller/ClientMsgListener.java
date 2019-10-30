@@ -18,7 +18,7 @@ public class ClientMsgListener implements MsgListener{
 		ResponseModel responseModel = new ResponseModel();
 		responseModel.readFromBytes(responseDTO.body);
 		LoggerUtils.info("客户端接收到响应-{}",JsonUtils.toJsonString(responseModel));
-		LoggerUtils.info("客户端接收到响应-{}",JsonUtils.toJsonString(msg));
+		//LoggerUtils.info("客户端接收到响应-{}",JsonUtils.toJsonString(msg));
 	}
 
 	@Override
